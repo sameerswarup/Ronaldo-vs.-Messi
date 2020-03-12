@@ -113,3 +113,17 @@ ronaldoStats <- tibble(
   goals = ronaldo %>% html_node(".goals .num") %>% html_text()
 )
 ```
+
+*Cleaning data from the messiStats dataframe*
+
+```{r}
+messiStatsparse <- messiStats %>%
+  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))
+```
+
+*Cleaning data from the ronaldoStats dataframe*
+
+```{r}
+ronaldoStatsparse <- ronaldoStats %>%
+  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))
+```
