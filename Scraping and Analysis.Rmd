@@ -1,28 +1,81 @@
 ---
 title: "Scraping and Analysis"
+author: "Waleed Iftikhar and Sameer Swarup"
 output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(rvest)
+library(dplyr)
+library(forcats)
+library(tidyverse)
 ```
 
-## R Markdown
+###Scraping data from Wikipedia
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+wikiurl <- "https://en.wikipedia.org/wiki/Ronaldo%E2%80%93Messi_rivalry#Club_statistics"
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+wikipage <- read_html(wikiurl)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+*Creating a dataset of club goals*
+```{r}
+tables.html <- html_nodes(wikipage,"table")
+clgls <- html_table(tables.html[[5]], fill = TRUE) %>% as_tibble()
+```
+
+*Creating a dataset of Messi Club Goals.*
+```{r}
+messiclgls <- clgls  %>%
+  select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
+  slice(3:22)
+messiclgls <- messiclgls %>%
+  rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" )
+messiclgls <- messiclgls%>%
+  slice(-(1:3))%>%
+  slice(-17)
+```
+
+*Creating a dataset of Ronaldo Club Goals*
+
+```{r}
+crisclgls <- clgls  %>%
+  select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
+  slice(23:47)
+crisclgls <- crisclgls %>%
+  rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" )
+crisclgls <- crisclgls%>%
+  slice(-(1:3))%>%
+  drop_na()
+```
+
+*Creating a dataset of international goals*
+```{r}
+intgls <- html_table(tables.html[[8]], fill = TRUE) %>% as_tibble()
+```
+
+*Creating a dataset of Messi International Goals.*
+```{r}
+messiintgls <- intgls  %>%
+  select(X1,X2,X3,X4,X5,X6,X7,X8)%>%
+  slice(3:19)
+messiintgls <- messiintgls %>%
+  rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8")
+messiintgls <- messiintgls%>%
+  slice(-(1:2))
+```
+
+*Creating a dataset of Ronaldo International Goals.*
+```{r}
+crisintgls <- intgls  %>%
+  select(X1,X2,X3,X4,X5,X6,X7,X8)%>%
+  slice(23:41)
+crisintgls <- crisintgls %>%
+  rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8")
+crisintgls <- crisintgls%>%
+  slice(-(1:2))
+```
