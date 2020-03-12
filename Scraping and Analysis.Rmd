@@ -7,9 +7,12 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(rvest)
-library(dplyr)
-library(forcats)
 library(tidyverse)
+library(purrr)
+library(survey)
+library(forcats)
+library(class)
+library(readr)
 ```
 
 ###Scraping data from Wikipedia
@@ -78,4 +81,35 @@ crisintgls <- crisintgls %>%
   rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8")
 crisintgls <- crisintgls%>%
   slice(-(1:2))
+```
+
+```{r}
+urlCalendar <- "https://messivsronaldo.net/calendar-year-stats/"
+pageCalendar <- read_html(urlCalendar)
+```
+
+```{r}
+div.html <- html_nodes(pageCalendar, "ul")
+str(div.html)
+```
+
+```{r}
+messi <- html_nodes(pageCalendar, ".messi.stats")
+ronaldo <- html_nodes(pageCalendar, ".ronaldo.stats")
+```
+
+```{r}
+messiStats <- tibble(
+  apps = messi %>% html_node(".apps") %>% html_text(),
+  assists = messi %>% html_node(".assists") %>% html_text(),
+  goals = messi %>% html_node(".goals .num") %>% html_text()
+)
+```
+
+```{r}
+ronaldoStats <- tibble(
+  apps = ronaldo %>% html_node(".apps") %>% html_text(),
+  assists = ronaldo %>% html_node(".assists") %>% html_text(),
+  goals = ronaldo %>% html_node(".goals .num") %>% html_text()
+)
 ```
