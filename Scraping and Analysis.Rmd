@@ -13,6 +13,7 @@ library(survey)
 library(forcats)
 library(class)
 library(readr)
+library(tidyr)
 ```
 
 ###Scraping data from Wikipedia
@@ -83,6 +84,7 @@ crisintgls <- crisintgls%>%
   slice(-(1:2))
 ```
 
+*Scraping data from MessivsRonaldo.net*
 ```{r}
 urlCalendar <- "https://messivsronaldo.net/calendar-year-stats/"
 pageCalendar <- read_html(urlCalendar)
@@ -118,12 +120,136 @@ ronaldoStats <- tibble(
 
 ```{r}
 messiStatsparse <- messiStats %>%
-  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))
+  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))%>%
+  mutate(type = rep(c("Total", "Club", "Country"), nrow(messiStatsparse)/3))
 ```
+
+*Filtering Apps, Assists, and Goals based on Total, Club and Country*
+
+```{r}
+MTotals <- messiStatsparse%>%
+  filter(type == "Total")
+MClubs <- messiStatsparse%>%
+  filter(type == "Club")
+MCountries <- messiStatsparse%>%
+  filter(type == "Country")
+```
+
+```{r}
+MTotals <- MTotals %>%
+  select(apps,assists,goals) %>%
+  rename(MTotApps = "apps", MTotAssists = "assists", MTotGoals = "goals" )%>%
+  mutate(Year = rep(2020:2002))%>%
+  select(Year, MTotApps, MTotAssists, MTotGoals)
+```
+
+```{r}
+MClubs <- MClubs %>%
+  select(apps,assists,goals) %>%
+  rename(MClubApps = "apps", MClubAssists = "assists", MClubGoals = "goals" )%>%
+  mutate(Year = rep(2020:2002))%>%
+  select(Year, MClubApps, MClubAssists, MClubGoals)
+```
+
+```{r}
+MCountries <- MCountries %>%
+  select(apps,assists,goals) %>%
+  rename(MCoApps = "apps", MCoAssists = "assists", MCoGoals = "goals" )%>%
+  mutate(Year = rep(2020:2002))%>%
+  select(Year, MCoApps, MCoAssists, MCoGoals)
+```
+
+```{r}
+MessiPartial <- left_join(MTotals,MClubs, by = "Year")
+MessiComplete <- left_join(MessiPartial, MCountries, by = "Year")
+```
+
 
 *Cleaning data from the ronaldoStats dataframe*
 
 ```{r}
 ronaldoStatsparse <- ronaldoStats %>%
-  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))
+  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))%>%
+  mutate(type = rep(c("Total", "Club", "Country"), nrow(ronaldoStatsparse)/3))
 ```
+
+```{r}
+RTotals <- ronaldoStatsparse%>%
+  filter(type == "Total")
+RClubs <- ronaldoStatsparse%>%
+  filter(type == "Club")
+RCountries <- ronaldoStatsparse%>%
+  filter(type == "Country")
+```
+
+```{r}
+RTotals <- RTotals %>%
+  select(apps,assists,goals) %>%
+  rename(RTotApps = "apps", RTotAssists = "assists", RTotGoals = "goals" )%>%
+  mutate(Year = rep(2020:2002))%>%
+  select(Year, RTotApps, RTotAssists, RTotGoals)
+```
+
+```{r}
+RClubs <- RClubs %>%
+  select(apps,assists,goals) %>%
+  rename(RClubApps = "apps", RClubAssists = "assists", RClubGoals = "goals" )%>%
+  mutate(Year = rep(2020:2002))%>%
+  select(Year, RClubApps, RClubAssists, RClubGoals)
+```
+
+```{r}
+RCountries <- RCountries %>%
+  select(apps,assists,goals) %>%
+  rename(RCoApps = "apps", RCoAssists = "assists", RCoGoals = "goals" )%>%
+  mutate(Year = rep(2020:2002))%>%
+  select(Year, RCoApps, RCoAssists, RCoGoals)
+```
+
+```{r}
+RonaldoPartial <- left_join(RTotals,RClubs, by = "Year")
+RonaldoComplete <- left_join(RonaldoPartial, RCountries, by = "Year")
+```
+
+*Joining the MessiComplete and RonaldoComplete Dataframes*
+
+```{r}
+StatsComplete <- inner_join(MessiComplete, RonaldoComplete, by = "Year")
+```
+
+*Datawrangling from Trophy_Comparison dataset*
+
+```{r}
+RonaldoTrophies <- Trophy_Comparison%>%
+  filter(Player == "Ronaldo")
+MessiTrophies <- Trophy_Comparison%>%
+  filter(Player == "Messi")
+```
+
+```{r}
+RonaldoTrophies1 <- RonaldoTrophies %>%
+  select(Year, League, DomesticCup, EuropeanCup) %>%
+  rename(RLeague = "League", RDomesticCup = "DomesticCup", REuropeanCup = "EuropeanCup")
+MessiTrophies1 <- MessiTrophies %>%
+  select(Year, League, DomesticCup, EuropeanCup) %>%
+  rename(MLeague = "League", MDomesticCup = "DomesticCup", MEuropeanCup = "EuropeanCup")
+```
+
+```{r}
+Trophies <- inner_join(MessiTrophies1, RonaldoTrophies1, by = "Year")
+```
+
+```{r}
+WithoutAward <- inner_join(StatsComplete, Trophies, by = "Year")
+```
+
+```{r}
+WithoutAwardFilter <- WithoutAward %>%
+  filter(Year >= 2008 & Year != 2018)
+```
+
+```{r}
+WithAward <- WithoutAwardFilter %>%
+  mutate(BallonDor = c("Messi", "Ronaldo", "Ronaldo","Messi", "Ronaldo", "Ronaldo", "Messi", "Messi", "Messi", "Messi", "Ronaldo"))
+```
+
