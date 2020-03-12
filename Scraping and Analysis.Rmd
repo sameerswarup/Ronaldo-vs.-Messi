@@ -28,5 +28,22 @@ str(div.html)
 ```
 
 ```{r}
-messiTable <- html_ul(div.html[[11]]) %>% as_tibble()
+messi <- html_nodes(pageCalendar, ".messi.stats")
+ronaldo <- html_nodes(pageCalendar, ".ronaldo.stats")
+```
+
+```{r}
+messiStats <- tibble(
+  apps = messi %>% html_node(".apps") %>% html_text(),
+  assists = messi %>% html_node(".assists") %>% html_text(),
+  goals = messi %>% html_node(".goals .num") %>% html_text()
+)
+```
+
+```{r}
+ronaldoStats <- tibble(
+  apps = ronaldo %>% html_node(".apps") %>% html_text(),
+  assists = ronaldo %>% html_node(".assists") %>% html_text(),
+  goals = ronaldo %>% html_node(".goals .num") %>% html_text()
+)
 ```
