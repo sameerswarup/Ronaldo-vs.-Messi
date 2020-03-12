@@ -114,6 +114,20 @@ ronaldoStats <- tibble(
 )
 ```
 
+*Cleaning data from the messiStats dataframe*
+
+```{r}
+messiStatsparse <- messiStats %>%
+  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))
+```
+
+*Cleaning data from the ronaldoStats dataframe*
+
+```{r}
+ronaldoStatsparse <- ronaldoStats %>%
+  mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))
+```
+
 ```{r}
 ClubAndCountryStats <- data.frame(matrix(ncol = 12, nrow = nrow(ronaldoStats)))
 
