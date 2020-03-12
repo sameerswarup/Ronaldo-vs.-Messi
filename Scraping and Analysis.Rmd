@@ -164,7 +164,6 @@ MessiPartial <- left_join(MTotals,MClubs, by = "Year")
 MessiComplete <- left_join(MessiPartial, MCountries, by = "Year")
 ```
 
-
 *Cleaning data from the ronaldoStats dataframe*
 
 ```{r}
