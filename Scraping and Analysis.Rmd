@@ -129,11 +129,15 @@ ronaldoStatsparse <- ronaldoStats %>%
 ```
 
 ```{r}
-ClubAndCountryStats <- data.frame(matrix(ncol = 12, nrow = nrow(ronaldoStats)))
+ClubAndCountryStats <- data.frame(matrix(ncol = 12, nrow = nrow(ronaldoStats/3)))
 
 x <- c("Messi Country Apps", "Messi Country Goals", "Messi Country Assists", "Messi Club Apps", "Messi Club Goals", "Messi Club Assists", "Ronaldo Country Apps", "Ronaldo Country Goals", "Ronaldo Country Assists", "Ronaldo Club Apps", "Ronaldo Club Goals", "Ronaldo Club Assists")
 
 colnames(ClubAndCountryStats) <- x
+```
+
+```{r}
+
 ```
 
 ```{r}
