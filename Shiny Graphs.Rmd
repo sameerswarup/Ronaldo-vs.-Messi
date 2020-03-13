@@ -1,6 +1,6 @@
 ---
 title: "Shiny Graphs"
-output: github_document
+output: html_document
 runtime: shiny
 ---
 
@@ -11,25 +11,47 @@ library(readr)
 ```
 
 ```{r}
-MessiRonaldoComplete <- read_csv("~/R/pair-assignment/final-project-WaleedIftikhar-SameerSwarup/MessiRonaldoComplete.csv")
+MessiRonaldoComplete <- read_csv("MessiRonaldoComplete.csv")
 ```
 
 ```{r}
-inputPanel(
-  # bin widget:
-  radioButtons("n_bins_1", label = "Number of histogram bins:",
-              choices = seq(15,100,by=5), selected = 50),
- 
-  # data widget: selecting the variable 
-  selectInput("x_1", label = "Variable:", 
-             choices = c("Messi Appearances" ="MTotApps",
-                         "Messi Total Goals" = "MTotGoals",
-                         "Messi Total Assists" = "MTotAssists"))
+fluidPage(
+  fluidRow( 
+    column(width = 3,   
+        wellPanel(                
+          # data widget: selecting the variables 
+          selectInput("x_5", label = "x-axis Variable:",
+             choices = c("Appearances" ="",
+                         "Goals" = "life_expectancy",
+                         "Assists" = "population"), 
+             selected="income"),
+          selectInput("y_5", label = "y-axis Variable:",
+             choices = c("Income" ="income",
+                         "Life expectancy" = "life_expectancy",
+                         "Population" = "population"), 
+             selected="life_expectancy")
+        )
+      ),
+    column(width = 8, 
+             plotOutput("gap_plot_5",hover="hover_coord_5")
+      )
+    ),
+  fluidRow(
+      column(width = 12, 
+             tableOutput("hover_data_5")
+      )
+  )
 )
 
-renderPlot({
-  ggplot(MessiRonaldoComplete, aes_string(x = input$x_1)) + 
-    geom_histogram(aes(y = ..density..), bins = input$n_bins_1) +
-    geom_density(color = "blue", size=1.5)
+# render plot
+output$gap_plot_5 <- renderPlot({
+  ggplot(gapminder, aes_string(x = input$x_5, y = input$y_5)) + 
+    geom_point() + 
+    theme(axis.text=element_text(size=16),
+          axis.title=element_text(size=16) )
 })
+## render text for hovered point(s)
+output$hover_data_5 <- renderTable({
+   nearPoints(gapminder, input$hover_coord_5)[,1:6]
+  })
 ```
