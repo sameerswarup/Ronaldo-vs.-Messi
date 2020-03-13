@@ -121,7 +121,7 @@ ronaldoStats <- tibble(
 ```{r}
 messiStatsparse <- messiStats %>%
   mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))%>%
-  mutate(type = rep(c("Total", "Club", "Country"), nrow(messiStatsparse)/3))
+  mutate(type = rep(c("Total", "Club", "Country"), nrow(messiStats)/3))
 ```
 
 *Filtering Apps, Assists, and Goals based on Total, Club and Country*
@@ -169,7 +169,7 @@ MessiComplete <- left_join(MessiPartial, MCountries, by = "Year")
 ```{r}
 ronaldoStatsparse <- ronaldoStats %>%
   mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))%>%
-  mutate(type = rep(c("Total", "Club", "Country"), nrow(ronaldoStatsparse)/3))
+  mutate(type = rep(c("Total", "Club", "Country"), nrow(ronaldoStats)/3))
 ```
 
 ```{r}
