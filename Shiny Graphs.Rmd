@@ -1,11 +1,13 @@
 ---
 title: "Shiny Graphs"
-output: github_document
+output: html_document
 runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readr)
 library(tidyr)
 ```
 
@@ -14,32 +16,68 @@ library(tidyr)
 *Gathering the dataframe*
 
 ```{r}
-MessiRonaldoComplete <- read_csv("/Accounts/iftikharw/Math285/Assignments/final-project-WaleedIftikhar-SameerSwarup/MessiRonaldoComplete.csv")
+RonaldoComplete <- read_csv("/Accounts/iftikharw/Math285/Assignments/final-project-WaleedIftikhar-SameerSwarup/RonaldoComplete.csv")
 ```
 
 ```{r}
-partialgather1 <- gather(MessiRonaldoComplete, )
+MessiComplete <- read_csv("/Accounts/iftikharw/Math285/Assignments/final-project-WaleedIftikhar-SameerSwarup/MessiComplete.csv")
+```
+
+```{r}
+MessiComplete1 <- MessiComplete %>%
+  rename(TotApps = "MTotApps", TotAssists = "MTotAssists", TotGoals = "MTotGoals",ClubApps = "MClubApps",ClubAssists = "MClubAssists",ClubGoals = "MClubGoals",CoApps = "MCoApps",CoAssists = "MCoAssists",CoGoals = "MCoGoals")%>%
+  mutate(Player = rep(c("Messi"), nrow(MessiComplete)))
+```
+
+```{r}
+RonaldoComplete1 <- RonaldoComplete %>%
+  rename(TotApps = "RTotApps", TotAssists = "RTotAssists", TotGoals = "RTotGoals",ClubApps = "RClubApps",ClubAssists = "RClubAssists",ClubGoals = "RClubGoals",CoApps = "RCoApps",CoAssists = "RCoAssists",CoGoals = "RCoGoals")%>%
+  mutate(Player = rep(c("Ronaldo"), nrow(RonaldoComplete)))
+```
+
+```{r}
+MessiRonaldoLonger <- rbind(MessiComplete1,RonaldoComplete1) %>%
+  select(Year, Player, TotApps,TotAssists,TotGoals,ClubApps,
+         ClubAssists,ClubGoals,CoApps,CoAssists,CoGoals)
 ```
 
 
+```{r}
+inputPanel(
+  selectInput("x_2", label = "Type of Stat", 
+             choices = c("Total Appearances" ="TotApps",
+                         "Total Assists" ="TotAssists",
+                         "Total Goals" ="TotGoals",
+                         "Club Appearances" ="ClubApps",
+                         "Club Assists" ="ClubAssists",
+                         "Club Goals" ="ClubGoals",
+                         "Country Appearances" ="CoApps",
+                         "Country Assists" ="CoAssists",
+                         "Country Goals" ="CoGoals"))
+)
+renderPlot({
+  ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$x_2)) + 
+    geom_col()+
+    facet_wrap(~Player)
+})
+```
 
 ```{r}
 inputPanel(
   # bin widget:
   radioButtons("n_bins_1", label = "Number of histogram bins:",
-              choices = seq(50,125,by=25), selected = 75),
-  # bandwidth widget:
-  sliderInput("bw_adjust_1", label = "Density smoother bandwidth adjustment:",
-              min = 0.1, max = 2, value = 1, step = 0.1),
+              choices = seq(15,100,by=5), selected = 50),
+ 
   # data widget: selecting the variable 
-  selectInput("x_1", label = "Type of ", 
-             choices = c("Character count" ="charCount",
-                         "Number of words" = "nWords",
-                         "Number of real words" = "nRealWords"))
+  selectInput("x_1", label = "Variable:", 
+             choices = c("Messi Appearances" ="MTotApps",
+                         "Messi Total Goals" = "MTotGoals",
+                         "Messi Total Assists" = "MTotAssists"))
 )
+
 renderPlot({
-  ggplot(tweets, aes_string(x = input$x_1)) + 
+  ggplot(MessiRonaldoComplete, aes_string(x = input$x_1)) + 
     geom_histogram(aes(y = ..density..), bins = input$n_bins_1) +
-    geom_density(color = "blue", adjust = input$bw_adjust_1, size=1.5)
+    geom_density(color = "blue", size=1.5)
 })
 ```

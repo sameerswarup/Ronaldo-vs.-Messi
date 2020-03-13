@@ -160,6 +160,7 @@ MCountries <- MCountries %>%
 ```{r}
 MessiPartial <- left_join(MTotals,MClubs, by = "Year")
 MessiComplete <- left_join(MessiPartial, MCountries, by = "Year")
+write_csv(MessiComplete, "MessiComplete.csv")
 ```
 
 *Cleaning data from the ronaldoStats dataframe*
@@ -205,6 +206,7 @@ RCountries <- RCountries %>%
 ```{r}
 RonaldoPartial <- left_join(RTotals,RClubs, by = "Year")
 RonaldoComplete <- left_join(RonaldoPartial, RCountries, by = "Year")
+write_csv(RonaldoComplete, "RonaldoComplete.csv")
 ```
 
 *Joining the MessiComplete and RonaldoComplete Dataframes*
