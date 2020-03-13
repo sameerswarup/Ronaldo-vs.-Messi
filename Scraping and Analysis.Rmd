@@ -245,8 +245,6 @@ WithoutAwardFilter <- WithoutAward %>%
 ```{r}
 WithAward <- WithoutAwardFilter %>%
   mutate(BallonDor = c("Messi", "Ronaldo", "Ronaldo","Messi", "Ronaldo", "Ronaldo", "Messi", "Messi", "Messi", "Messi", "Ronaldo"))
+write_csv(WithAward, "MessiRonaldoComplete.csv")
 ```
 
-```{r}
-
-```
