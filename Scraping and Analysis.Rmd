@@ -16,8 +16,7 @@ library(readr)
 library(tidyr)
 ```
 
-###Scraping data from Wikipedia
-
+*Scraping data from Wikipedia*
 ```{r}
 wikiurl <- "https://en.wikipedia.org/wiki/Ronaldo%E2%80%93Messi_rivalry#Club_statistics"
 ```
@@ -45,7 +44,6 @@ messiclgls <- messiclgls%>%
 ```
 
 *Creating a dataset of Ronaldo Club Goals*
-
 ```{r}
 crisclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
@@ -90,15 +88,17 @@ urlCalendar <- "https://messivsronaldo.net/calendar-year-stats/"
 pageCalendar <- read_html(urlCalendar)
 ```
 
+*Getting all nodes of type unordered list (ul)*
 ```{r}
 div.html <- html_nodes(pageCalendar, "ul")
 ```
-
+*Getting all of messi's and ronaldo's stats from the ul parent nodes*
 ```{r}
 messi <- html_nodes(pageCalendar, ".messi.stats")
 ronaldo <- html_nodes(pageCalendar, ".ronaldo.stats")
 ```
 
+*Making tibble out of messi stats*
 ```{r}
 messiStats <- tibble(
   apps = messi %>% html_node(".apps") %>% html_text(),
@@ -107,6 +107,7 @@ messiStats <- tibble(
 )
 ```
 
+*Making tibble out of ronaldo stats*
 ```{r}
 ronaldoStats <- tibble(
   apps = ronaldo %>% html_node(".apps") %>% html_text(),
@@ -116,7 +117,6 @@ ronaldoStats <- tibble(
 ```
 
 *Cleaning data from the messiStats dataframe*
-
 ```{r}
 messiStatsparse <- messiStats %>%
   mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))%>%
@@ -124,7 +124,6 @@ messiStatsparse <- messiStats %>%
 ```
 
 *Filtering Apps, Assists, and Goals based on Total, Club and Country*
-
 ```{r}
 MTotals <- messiStatsparse%>%
   filter(type == "Total")
@@ -164,7 +163,6 @@ MessiComplete <- left_join(MessiPartial, MCountries, by = "Year")
 ```
 
 *Cleaning data from the ronaldoStats dataframe*
-
 ```{r}
 ronaldoStatsparse <- ronaldoStats %>%
   mutate(apps = parse_number(apps), assists = parse_number(assists), goals = parse_number(goals))%>%
@@ -210,13 +208,11 @@ RonaldoComplete <- left_join(RonaldoPartial, RCountries, by = "Year")
 ```
 
 *Joining the MessiComplete and RonaldoComplete Dataframes*
-
 ```{r}
 StatsComplete <- inner_join(MessiComplete, RonaldoComplete, by = "Year")
 ```
 
 *Datawrangling from Trophy_Comparison dataset*
-
 ```{r}
 RonaldoTrophies <- Trophy_Comparison%>%
   filter(Player == "Ronaldo")
