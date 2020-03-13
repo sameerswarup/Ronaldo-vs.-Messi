@@ -11,7 +11,7 @@ library(readr)
 ```
 
 ```{r}
-MessiRonaldoComplete <- read_csv("MessiRonaldoComplete.csv")
+MessiRonaldoComplete <- read_csv("~/R/pair-assignment/final-project-WaleedIftikhar-SameerSwarup/MessiRonaldoComplete.csv")
 ```
 
 ```{r}
