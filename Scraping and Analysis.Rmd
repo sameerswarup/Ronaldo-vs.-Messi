@@ -92,7 +92,6 @@ pageCalendar <- read_html(urlCalendar)
 
 ```{r}
 div.html <- html_nodes(pageCalendar, "ul")
-str(div.html)
 ```
 
 ```{r}
