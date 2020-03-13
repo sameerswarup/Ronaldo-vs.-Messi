@@ -16,11 +16,11 @@ library(tidyr)
 *Gathering the dataframe*
 
 ```{r}
-RonaldoComplete <- read_csv("/Accounts/iftikharw/Math285/Assignments/final-project-WaleedIftikhar-SameerSwarup/RonaldoComplete.csv")
+RonaldoComplete <- read_csv("RonaldoComplete.csv")
 ```
 
 ```{r}
-MessiComplete <- read_csv("/Accounts/iftikharw/Math285/Assignments/final-project-WaleedIftikhar-SameerSwarup/MessiComplete.csv")
+MessiComplete <- read_csv("MessiComplete.csv")
 ```
 
 ```{r}
@@ -68,16 +68,17 @@ fluidPage(
     column(width = 3,   
         wellPanel(                
           # data widget: selecting the variables 
-          selectInput("x_5", label = "x-axis Variable:",
-             choices = c("Appearances" ="",
-                         "Goals" = "life_expectancy",
-                         "Assists" = "population"), 
-             selected="income"),
           selectInput("y_5", label = "y-axis Variable:",
-             choices = c("Income" ="income",
-                         "Life expectancy" = "life_expectancy",
-                         "Population" = "population"), 
-             selected="life_expectancy")
+             choices = c("Total Appearances" ="TotApps",
+                         "Total Assists" ="TotAssists",
+                         "Total Goals" ="TotGoals",
+                         "Club Appearances" ="ClubApps",
+                         "Club Assists" ="ClubAssists",
+                         "Club Goals" ="ClubGoals",
+                         "Country Appearances" ="CoApps",
+                         "Country Assists" ="CoAssists",
+                         "Country Goals" ="CoGoals"), 
+             selected="TotApps")
         )
       ),
     column(width = 8, 
@@ -93,13 +94,13 @@ fluidPage(
 
 # render plot
 output$gap_plot_5 <- renderPlot({
-  ggplot(gapminder, aes_string(x = input$x_5, y = input$y_5)) + 
+  ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
 })
 ## render text for hovered point(s)
 output$hover_data_5 <- renderTable({
-   nearPoints(gapminder, input$hover_coord_5)[,1:6]
+   nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
   })
 ```
