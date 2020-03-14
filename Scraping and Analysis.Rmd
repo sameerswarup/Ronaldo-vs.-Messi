@@ -268,7 +268,7 @@ messiTable.html <- html_nodes(messiClubStatsPage, "table")
 ```{r}
 messiLaLiga <- html_table(messiTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-messiLaLiga <- messiLaLiga %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+messiLaLiga <- messiLaLiga %>% select(Season, Club, ...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:11)
 ```
 
 ```{r}
@@ -300,7 +300,7 @@ ronaldoTable.html <- html_nodes(ronaldoClubStatsPage, "table")
 ```{r}
 ronaldoLaLiga <- html_table(ronaldoTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-ronaldoLaLiga <- ronaldoLaLiga %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+ronaldoLaLiga <- ronaldoLaLiga %>% select(Season, Club, ...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:11)
 ```
 
 ```{r}
@@ -313,4 +313,22 @@ ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals
 ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
 ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+```
+
+*Join the Messi and Ronaldo datasets for each competition*
+```{r}
+#LaLiga
+messiAndRonaldoLaLiga <- left_join(messiLaLiga, ronaldoLaLiga, by = "Season")
+
+messiAndRonaldoLaLiga <- messiAndRonaldoLaLiga %>% rename(messiAppearances = "Appearances.x",
+                                                          messiGoals = "Goals.x",
+                                                          messiAssists = "Assists.x", 
+                                                          ronaldoAppearances = "Appearances.y",
+                                                          ronaldoGoals = "Goals.y",
+                                                          ronaldoAssists =   "Assists.y")
+```
+
+```{r}
+messiAndRonaldoLaLiga$Appearances <- paste(messiAndRonaldoLaLiga$messiAppearances, 
+                                           messiAndRonaldoLaLiga$ronaldoAppearances)
 ```
