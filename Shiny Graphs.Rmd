@@ -96,6 +96,7 @@ fluidPage(
 output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
+    geom_smooth() +
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
 })
@@ -103,4 +104,8 @@ output$gap_plot_5 <- renderPlot({
 output$hover_data_5 <- renderTable({
    nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
   })
+```
+
+```{r}
+
 ```
