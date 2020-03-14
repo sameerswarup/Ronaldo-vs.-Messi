@@ -268,20 +268,21 @@ messiTable.html <- html_nodes(messiClubStatsPage, "table")
 ```{r}
 messiLaLiga <- html_table(messiTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-messiLaLiga <- messiLaLiga %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na()
+messiLaLiga <- messiLaLiga %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
 
 ```{r}
 messiCopaDelRey <-html_table(messiTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na()
+messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
 
 ```{r}
 messiChampionsLeague <-  html_table(messiTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na()
+messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
+
 
 *Scraping data on Ronaldo goals in competitions.*
 ```{r}
@@ -299,17 +300,17 @@ ronaldoTable.html <- html_nodes(ronaldoClubStatsPage, "table")
 ```{r}
 ronaldoLaLiga <- html_table(ronaldoTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-ronaldoLaLiga <- ronaldoLaLiga %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na()
+ronaldoLaLiga <- ronaldoLaLiga %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
 
 ```{r}
 ronaldoCopaDelRey <-html_table(ronaldoTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na()
+ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
 
 ```{r}
 ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na()
+ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
