@@ -74,7 +74,7 @@ renderPlot({
 ```
 
 ```{r}
-shinyUI(fluidPage(
+fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
@@ -102,40 +102,30 @@ shinyUI(fluidPage(
       ),
   mainPanel(
     tabsetPanel(type = "tab",
-                tabPanel("Dataset",tableOutput("data")),
-                tabPanel("Plot", plotOutput("gap_plot_5"))
+                tabPanel("Plot", plotOutput("gap_plot_5")),
+                tabPanel("Dataset",tableOutput("data"))
                 )
    )
   )
  )
-)
 
 # render plot
-shinyServer(
   output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
-}))
+})
 ## render text for hovered point(s)
-shinyServer(
   output$hover_data_5 <- renderTable({
    nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
-  }))
+  })
 
-shinyServer(
-  function(input, output){
-    output$data <- renderTable({
-      MessiRonaldoLonger  
-    })
-  }
-)
 ```
 
 ```{r}
 #LaLiga
-shinyUI(fluidPage(
+fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
@@ -145,7 +135,7 @@ shinyUI(fluidPage(
                          "Goals" = "Goals",
                          "Assists" = "Assists"),
              selected="Appearances")
-)))))
+))))
 renderPlot({
   ggplot(messiAndRonaldoLaLiga, aes_string(x = "Season", y = input$y_6, fill = "Player")) + 
     geom_col()+
@@ -155,7 +145,7 @@ renderPlot({
 
 ```{r}
 #UCL
-shinyUI(fluidPage(
+fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
@@ -165,7 +155,7 @@ shinyUI(fluidPage(
                          "Goals" = "Goals",
                          "Assists" = "Assists"),
              selected="Appearances")
-)))))
+))))
 renderPlot({
   ggplot(messiAndRonaldoUEFA, aes_string(x = "Season", y = input$y_7, fill = "Player")) + 
     geom_col()+
