@@ -20,6 +20,8 @@ library(partykit)
 library(rpart)
 ```
 
+##Data scraping and Data wrangling
+
 *Scraping data from Wikipedia page on Ronaldo vs Messi rivalry*
 ```{r}
 wikiurl <- "https://en.wikipedia.org/wiki/Ronaldo%E2%80%93Messi_rivalry#Club_statistics"
@@ -185,6 +187,7 @@ ronaldoStatsparse <- ronaldoStats %>%
   mutate(type = rep(c("Total", "Club", "Country"), nrow(ronaldoStats)/3))
 ```
 
+*Filtering Apps, Assists, and Goals based on Total, Club and Country*
 ```{r}
 RTotals <- ronaldoStatsparse%>%
   filter(type == "Total")
@@ -194,6 +197,7 @@ RCountries <- ronaldoStatsparse%>%
   filter(type == "Country")
 ```
 
+*Cleaning dataset to only contain total apps, goals and assists for Ronaldo from 2002 to 2020.*
 ```{r}
 RTotals <- RTotals %>%
   select(apps,assists,goals) %>%
@@ -202,6 +206,7 @@ RTotals <- RTotals %>%
   select(Year, RTotApps, RTotAssists, RTotGoals)
 ```
 
+*Cleaning dataset to only contain club apps, goals and assists for Ronaldo from 2002 to 2020.*
 ```{r}
 RClubs <- RClubs %>%
   select(apps,assists,goals) %>%
@@ -210,6 +215,7 @@ RClubs <- RClubs %>%
   select(Year, RClubApps, RClubAssists, RClubGoals)
 ```
 
+*Cleaning dataset to only contain country apps, goals and assists for Ronaldo from 2002 to 2020.*
 ```{r}
 RCountries <- RCountries %>%
   select(apps,assists,goals) %>%
@@ -218,6 +224,7 @@ RCountries <- RCountries %>%
   select(Year, RCoApps, RCoAssists, RCoGoals)
 ```
 
+*Creating dataset and writing csv that has apps, goals and assists for Ronaldo in club, country and total.*
 ```{r}
 RonaldoPartial <- left_join(RTotals,RClubs, by = "Year")
 RonaldoComplete <- left_join(RonaldoPartial, RCountries, by = "Year")
@@ -237,6 +244,7 @@ MessiTrophies <- Trophy_Comparison%>%
   filter(Player == "Messi")
 ```
 
+*Renaming the League, Domestic and European Cup Variables specific to each player in order to create a wide dataset*
 ```{r}
 RonaldoTrophies1 <- RonaldoTrophies %>%
   select(Year, League, DomesticCup, EuropeanCup) %>%
@@ -246,19 +254,23 @@ MessiTrophies1 <- MessiTrophies %>%
   rename(MLeague = "League", MDomesticCup = "DomesticCup", MEuropeanCup = "EuropeanCup")
 ```
 
+*Merging RonaldoTrophies1 and MessiTrophies1*
 ```{r}
 Trophies <- inner_join(MessiTrophies1, RonaldoTrophies1, by = "Year")
 ```
 
+*Merging data on Trophies with the Statistics for both players*
 ```{r}
 WithoutAward <- inner_join(StatsComplete, Trophies, by = "Year")
 ```
 
+*Only focusing on years in which one of them won the Ballon D'or.* 
 ```{r}
 WithoutAwardFilter <- WithoutAward %>%
   filter(Year >= 2008 & Year != 2018)
 ```
 
+*Adding the winners of the Ballon D'or for each year*
 ```{r}
 WithAward <- WithoutAwardFilter %>%
   mutate(BallonDor = c("Messi", "Ronaldo", "Ronaldo","Messi", "Ronaldo", "Ronaldo", "Messi", "Messi", "Messi", "Messi", "Ronaldo"))
@@ -266,7 +278,7 @@ write_csv(WithAward, "MessiRonaldoComplete.csv")
 ```
 
 
-*Scraping data on Messi goals in competitions.*
+*Scraping data on Messi goals in different competitions.*
 ```{r}
 messiClubStatsURL <- "https://www.transfermarkt.us/lionel-messi/detaillierteleistungsdaten/spieler/28003"
 ```
@@ -279,6 +291,7 @@ messiClubStatsPage <- read_html(messiClubStatsURL)
 messiTable.html <- html_nodes(messiClubStatsPage, "table")
 ```
 
+*Dataframe showing Messi's goals, assists and appearances in the Spanish national soccer league.*
 ```{r}
 messiLaLiga <- html_table(messiTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
@@ -300,6 +313,7 @@ ronaldoClubStatsPage <- read_html(ronaldoClubStatsURL)
 ronaldoTable.html <- html_nodes(ronaldoClubStatsPage, "table")
 ```
 
+*Dataframe showing Messi's goals, assists and appearances in the Spanish national soccer league.*
 ```{r}
 ronaldoLaLiga <- html_table(ronaldoTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
@@ -308,17 +322,15 @@ ronaldoLaLiga <- ronaldoLaLiga %>%
   mutate(Player = "Ronaldo")
 ```
 
-*Join the Messi and Ronaldo datasets for each competition*
+*Joining the Messi and Ronaldo datasets for the Spanish national soccer league*
 ```{r}
 #LaLiga
 messiAndRonaldoLaLiga <- rbind(messiLaLiga, ronaldoLaLiga)%>%
   select(Season, Player, Appearances, Goals, Assists)
-```
-
-```{r}
 write_csv(messiAndRonaldoLaLiga, "messiAndRonaldoLaLiga.csv")
 ```
 
+*Dataframe showing Messi's goals, assists and appearances in the European Cup (Champions League).*
 ```{r}
 messiChampionsLeague <-  html_table(messiTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
@@ -328,6 +340,7 @@ messiChampionsLeague <- messiChampionsLeague %>% slice(-(c(4,5,10,11,14,15,17)))
   mutate(Player = "Messi")
 ```
 
+*Dataframe showing Ronaldo's goals, assists and appearances in the European Cup (Champions League).*
 ```{r}
 ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
@@ -337,13 +350,11 @@ ronaldoChampionsLeague <- ronaldoChampionsLeague %>% slice(-(c(2,3,5,8,9,16,17))
   mutate(Player = "Ronaldo")
 ```
 
+*Joining the Messi and Ronaldo datasets for the Spanish national soccer league*
 ```{r}
 #ChampionsLeague
 messiAndRonaldoUEFA <- rbind(messiChampionsLeague, ronaldoChampionsLeague)%>%
   mutate(Assists = parse_number(Assists) )
-```
-
-```{r}
 write_csv(messiAndRonaldoUEFA, "messiAndRonaldoUEFA.csv")
 ```
 
@@ -351,7 +362,7 @@ write_csv(messiAndRonaldoUEFA, "messiAndRonaldoUEFA.csv")
 
 ###Fitting a Random Forests Model on the Dataset `MessiRonaldoComplete` 
 
-###Converting all binary variables from character to factors. Taking out All the total stats because they are just the sum of the club and country stats.
+*Converting all binary variables from character to factors. Taking out All the total stats because they are just the sum of the club and country stats.*
 ```{r}
 MessiRonaldoComplete1<- read.csv("MessiRonaldoComplete.csv") %>%
   select(-MTotAssists, -MTotGoals,- MTotApps, - RTotAssists, - RTotGoals, - RTotApps)
@@ -367,7 +378,7 @@ BDor_train <- MessiRonaldoComplete1 %>% slice(train_index)
 BDor_test <- MessiRonaldoComplete1 %>% slice(-train_index)
 ```
 
-###Tuning the value of mtry.
+*Tuning the value of mtry.*
 
 ```{r Tuning Random Forest With All Variables}
 set.seed(757302850)
@@ -407,9 +418,9 @@ confm_test$table
 confm_test$byClass
 ```
 
-*Taking out the Domestic Cup Variable because it is not important in determining who wins Ballon D'or.*
+###Taking out the Domestic Cup Variable because it is not important in determining who wins Ballon D'or.*
 
-###Tuning the value of mtry.
+*Tuning the value of mtry.*
 
 ```{r Tuning Random Forest Without Domestic Cups}
 set.seed(757302)
@@ -449,8 +460,7 @@ confm_test$table
 confm_test$byClass
 ```
 
-*Trying a different type of statistical learning method*
-
+###Trying a different type of statistical learning method*
 ###Logistic Regression
 
 ```{r}
@@ -464,7 +474,7 @@ BDor_test2 <- BDor_test %>%
          prediction = fct_relevel(prediction, "Ronaldo", "Messi"))
 ```
 
-###Determining the appropriate threshold level that maximizes accuracy. 
+*Determining the appropriate threshold level that maximizes accuracy.*
 ```{r}
 t <- seq(0.05, 0.95, by = 0.05)
 eval_fun <- function(t, test) 
@@ -495,7 +505,7 @@ BDor_test3 <- BDor_test %>%
          prediction = fct_relevel(prediction, "Ronaldo", "Messi"))
 ```
 
-###Determining the appropriate threshold level that maximizes accuracy. 
+*Determining the appropriate threshold level that maximizes accuracy.* 
 ```{r}
 t <- seq(0.05, 0.95, by = 0.05)
 eval_fun <- function(t, test) 
