@@ -14,6 +14,10 @@ library(forcats)
 library(class)
 library(readr)
 library(tidyr)
+library(randomForest)
+library(caret)
+library(partykit)
+library(rpart)
 ```
 
 *Scraping data from Wikipedia*
@@ -314,3 +318,140 @@ ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% a
 
 ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
+
+##Statistical Learning on the Dataset
+
+###Fitting a Random Forests Model on the Dataset `MessiRonaldoComplete` 
+
+###Converting all binary variables from character to factors. Taking out All the total stats because they are just the sum of the club and country stats.
+```{r}
+MessiRonaldoComplete1<- read.csv("MessiRonaldoComplete.csv") %>%
+  select(-MTotAssists, -MTotGoals,- MTotApps, - RTotAssists, - RTotGoals, - RTotApps)
+```
+
+*Splitting the training data into a training subset and a test subset.*
+
+```{r Training/Test Split}
+set.seed(757302859)
+n <- nrow(MessiRonaldoComplete1)
+train_index <- sample(n, size=round(.8*n))
+BDor_train <- MessiRonaldoComplete1 %>% slice(train_index)
+BDor_test <- MessiRonaldoComplete1 %>% slice(-train_index)
+```
+
+###Tuning the value of mtry.
+
+```{r Tuning Random Forest With All Variables}
+set.seed(757302850)
+train_control <- trainControl(
+  method = "cv",   # cross-validation 
+  number = 10     # 10-folds
+)
+randomforest_cv <- train(
+  BallonDor ~ .,            # predict election winner using all other variables in training
+  data = BDor_train,    # training data
+  method = "rf",           # classification method
+  tuneGrid = data.frame(mtry = seq(6,10, by = 1)),
+  trControl = train_control    # validation method
+)
+randomforest_cv
+```
+
+```{r Random Forest With All Variables}
+set.seed(2242021)
+BallonDor_rforest <- randomForest(BallonDor ~ ., 
+                                 data=BDor_train,
+                                 ntree=200, 
+                                 mtry = 10)
+BallonDor_rforest
+```
+
+```{r Variable Importance Plot}
+varImpPlot(BallonDor_rforest)
+```
+
+```{r RF Confirmation Matrix All Variables}
+confm_test <- confusionMatrix(
+  data = predict(BallonDor_rforest, newdata=BDor_test), 
+  reference = BDor_test$BallonDor, 
+  positive = "Messi" )
+confm_test$table
+confm_test$byClass
+```
+
+*Taking out the Domestic Cup Variable because it is not important in determining who wins Ballon D'or.*
+
+###Tuning the value of mtry.
+
+```{r Tuning Random Forest Without Domestic Cups}
+set.seed(757302)
+train_control <- trainControl(
+  method = "cv",   # cross-validation 
+  number = 10     # 10-folds
+)
+randomforest_cv1 <- train(
+  BallonDor ~ MClubApps + MClubAssists + MClubGoals+ MCoApps  + MCoAssists +MCoGoals + MDomesticCup + MEuropeanCup + MLeague + RClubApps + RClubAssists + RClubGoals   + RCoApps + RCoAssists + RCoGoals + RDomesticCup+ REuropeanCup + RLeague+ Year,            # predict election winner using all other variables in training
+  data = BDor_train,    # training data
+  method = "rf",           # classification method
+  tuneGrid = data.frame(mtry = seq(6,10, by = 1)),
+  trControl = train_control    # validation method
+)
+randomforest_cv1
+```
+
+```{r Random Forest Without Domestic Cups}
+set.seed(2242)
+BallonDor_rforest1 <- randomForest(BallonDor ~ MClubApps + MClubAssists + MClubGoals+ MCoApps  + MCoAssists +MCoGoals + MDomesticCup + MEuropeanCup + MLeague + RClubApps + RClubAssists + RClubGoals   + RCoApps + RCoAssists + RCoGoals + RDomesticCup+ REuropeanCup + RLeague+ Year , 
+                                 data=BDor_train,
+                                 ntree=200, 
+                                 mtry = 10)
+BallonDor_rforest1
+```
+
+```{r Variable Importance Plot}
+varImpPlot(BallonDor_rforest1)
+```
+
+```{r RF Confirmation Matrix without Domestic Cup}
+confm_test <- confusionMatrix(
+  data = predict(BallonDor_rforest, newdata=BDor_test), 
+  reference = BDor_test$BallonDor, 
+  positive = "Messi" )
+confm_test$table
+confm_test$byClass
+```
+
+*Trying a different type of statistical learning method*
+
+###Logistic Regression
+
+```{r}
+BDor_logistic <- glm(BallonDor~ ., data=BDor_train, family = binomial)
+```
+
+```{r}
+BDor_test2 <- BDor_test %>% 
+  mutate(prob = predict(BDor_logistic , newdata = BDor_test, type = "response"),
+         prediction = ifelse(prob > 0.5, "Messi", "Ronaldo"),
+         prediction = fct_relevel(prediction, "Ronaldo", "Messi"))
+```
+
+###Determining the appropriate threshold level that maximizes accuracy. 
+```{r}
+t <- seq(0.05, 0.95, by = 0.05)
+eval_fun <- function(t, test) 
+  {test %>%
+  mutate(prediction = ifelse( prob > t, "Messi", "Ronaldo") ) %>%
+  summarize(threshold=t, 
+            accuracy = mean(prediction == BallonDor), 
+            sensitivity = sum(prediction == "Messi" & BallonDor == "Messi")/sum(BallonDor == "Messi"),
+            specificity = sum(prediction == "Ronaldo" & BallonDor == "Ronaldo")/sum(BallonDor == "Ronaldo"),
+            precision = sum(prediction == "Messi" & BallonDor == "Messi")/sum(prediction == "Messi"))
+}
+eval_df <- map_df(t, eval_fun, test = BDor_test2)
+glimpse(eval_df)
+```
+
+All thresholds return the same value of accuracy, precision, sensitivity, and specificity. Therefore, we are using the threshold of 0.5. Also since we are getting correct predictions based on a Logistic Regression Model with all our variables, that is the model we will use to predict who should win the Ballon D'or. 
+
+
