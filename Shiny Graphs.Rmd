@@ -100,7 +100,7 @@ shinyUI(fluidPage(
       ),
   mainPanel(
     tabsetPanel(type = "tab",
-                tabPanel("Dataset",tableOutput(hover_data_5)),
+                tabPanel("Dataset",tableOutput(MessiRonaldoCompare)),
                 tabPanel("Plot", plotOutput(gap_plot_5))
                 )
    )
@@ -119,8 +119,8 @@ shinyServer(
 }))
 ## render text for hovered point(s)
 shinyServer(
-  output$hover_data_5 <- renderTable({
-   nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
+  output$MessiRonaldoCompare <- renderTable({
+   MessiRonaldoLonger
   }))
 ```
 
