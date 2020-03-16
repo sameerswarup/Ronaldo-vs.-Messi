@@ -72,7 +72,7 @@ renderPlot({
 ```
 
 ```{r}
-fluidPage(
+shinyUI(fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
@@ -97,27 +97,31 @@ fluidPage(
   fluidRow(
       column(width = 12, 
              tableOutput("hover_data_5")
-      )
+      ),
+  mainPanel(
+    plotOutput(gap_plot_5)
   )
+  )
+ )
 )
 
 # render plot
-output$gap_plot_5 <- renderPlot({
+shinyServer(output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
     geom_smooth(se = FALSE) +
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
-})
+}))
 ## render text for hovered point(s)
-output$hover_data_5 <- renderTable({
+shinyServer(output$hover_data_5 <- renderTable({
    nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
-  })
+  }))
 ```
 
 ```{r}
 #LaLiga
-fluidPage(
+shinyUI(fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
@@ -137,26 +141,27 @@ fluidPage(
       column(width = 12, 
              tableOutput("hover_data_6")
       )
-  )
+   )
+ )
 )
 
 # render plot
-output$gap_plot_6 <- renderPlot({
+shinyServer(output$gap_plot_6 <- renderPlot({
   ggplot(messiAndRonaldoLaLiga, aes_string(x = "Season", y = input$y_6, color= "Player")) + 
     geom_point() + 
     geom_smooth(se = FALSE) +
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
-})
+}))
 ## render text for hovered point(s)
-output$hover_data_6 <- renderTable({
+shinyServer(output$hover_data_6 <- renderTable({
    nearPoints(messiAndRonaldoLaLiga, input$hover_coord_6)[,1:5]
-  })
+  }))
 ```
 
 ```{r}
 #UCL
-fluidPage(
+shinyUI(fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
@@ -176,110 +181,20 @@ fluidPage(
       column(width = 12, 
              tableOutput("hover_data_7")
       )
-  )
+   )
+ )
 )
 
 # render plot
-output$gap_plot_7 <- renderPlot({
-  ggplot(messiAndRonaldoUEFA, aes_string(x = "Season", y = input$y_7, color= "Player")) + 
-    geom_point() + 
-    geom_smooth(se = FALSE) +
-    theme(axis.text=element_text(size=16),
-          axis.title=element_text(size=16) )
-})
+shinyServer(output$gap_plot_7 <- renderPlot({
+    ggplot(messiAndRonaldoUEFA, aes_string(x = "Season", y = input$y_7, color= "Player")) + 
+      geom_point() + 
+      geom_smooth(se = FALSE) +
+      theme(axis.text=element_text(size=16),
+            axis.title=element_text(size=16) )
+  }))
 ## render text for hovered point(s)
-output$hover_data_7 <- renderTable({
-   nearPoints(messiAndRonaldoUEFA, input$hover_coord_7)[,1:5]
-  })
-```
-
-```{r}
-ui <- fluidPage(
-
-  # App title ----
-  titlePanel("Tabsets"),
-
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
-
-    # Sidebar panel for inputs ----
-    sidebarPanel(
-
-      # Input: Select the random distribution type ----
-      radioButtons("dist", "Distribution type:",
-                   c("Normal" = "norm",
-                     "Uniform" = "unif",
-                     "Log-normal" = "lnorm",
-                     "Exponential" = "exp")),
-
-      # br() element to introduce extra vertical spacing ----
-      br(),
-
-      # Input: Slider for the number of observations to generate ----
-      sliderInput("n",
-                  "Number of observations:",
-                  value = 500,
-                  min = 1,
-                  max = 1000)
-
-    ),
-
-    # Main panel for displaying outputs ----
-    mainPanel(
-
-      # Output: Tabset w/ plot, summary, and table ----
-      tabsetPanel(type = "tabs",
-                  tabPanel("Plot", plotOutput("plot")),
-                  tabPanel("Summary", verbatimTextOutput("summary")),
-                  tabPanel("Table", tableOutput("table"))
-      )
-
-    )
-  )
-)
-```
-
-```{r}
-# Define server logic for random distribution app ----
-server <- function(input, output) {
-
-  # Reactive expression to generate the requested distribution ----
-  # This is called whenever the inputs change. The output functions
-  # defined below then use the value computed from this expression
-  d <- reactive({
-    dist <- switch(input$dist,
-                   norm = rnorm,
-                   unif = runif,
-                   lnorm = rlnorm,
-                   exp = rexp,
-                   rnorm)
-
-    dist(input$n)
-  })
-
-  # Generate a plot of the data ----
-  # Also uses the inputs to build the plot label. Note that the
-  # dependencies on the inputs and the data reactive expression are
-  # both tracked, and all expressions are called in the sequence
-  # implied by the dependency graph.
-  output$plot <- renderPlot({
-    dist <- input$dist
-    n <- input$n
-
-    hist(d(),
-         main = paste("r", dist, "(", n, ")", sep = ""),
-         col = "#75AADB", border = "white")
-  })
-
-  # Generate a summary of the data ----
-  output$summary <- renderPrint({
-    summary(d())
-  })
-
-  # Generate an HTML table view of the data ----
-  output$table <- renderTable({
-    d()
-  })
-
-}
+shinyServer(output$hover_data_7 <- renderTable({
+     nearPoints(messiAndRonaldoUEFA, input$hover_coord_7)[,1:5]
+    }))
 ```
