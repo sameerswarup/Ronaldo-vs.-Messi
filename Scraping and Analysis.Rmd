@@ -310,7 +310,7 @@ ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals
 *Join the Messi and Ronaldo datasets for each competition*
 ```{r}
 #LaLiga
-messiAndRonaldoLaLiga <- rbind(messiLaLiga, ronaldoLaLiga)
+messiAndRonaldoLaLiga <- left_join(messiLaLiga, ronaldoLaLiga, by = "Season")
 
 messiAndRonaldoLaLiga <- messiAndRonaldoLaLiga %>% rename(messiAppearances = "Appearances.x",
                                                           messiGoals = "Goals.x",
