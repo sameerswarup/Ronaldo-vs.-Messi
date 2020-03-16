@@ -22,21 +22,21 @@ library(rpart)
 
 *Scraping data from Wikipedia*
 ```{r}
+#Reading in Wikipedia Page on Ronaldo vs Messi rivalry
 wikiurl <- "https://en.wikipedia.org/wiki/Ronaldo%E2%80%93Messi_rivalry#Club_statistics"
-```
-
-```{r}
 wikipage <- read_html(wikiurl)
 ```
 
 *Creating a dataset of club goals*
 ```{r}
+#Extracting html table that has Messi and Ronaldo club goals
 tables.html <- html_nodes(wikipage,"table")
 clgls <- html_table(tables.html[[5]], fill = TRUE) %>% as_tibble()
 ```
 
 *Creating a dataset of Messi Club Goals.*
 ```{r}
+#Slicing tibble so that it has properly named columns and has data on Messi from 2008 to 2018
 messiclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
   slice(3:22)
@@ -49,6 +49,7 @@ messiclgls <- messiclgls%>%
 
 *Creating a dataset of Ronaldo Club Goals*
 ```{r}
+#Slicing tibble so that is has properly named columns and has data on Ronaldo from 2008 to 2018
 crisclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
   slice(23:47)
