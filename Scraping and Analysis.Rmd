@@ -20,14 +20,13 @@ library(partykit)
 library(rpart)
 ```
 
-*Scraping data from Wikipedia*
+*Scraping data from Wikipedia page on Ronaldo vs Messi rivalry*
 ```{r}
-#Reading in Wikipedia Page on Ronaldo vs Messi rivalry
 wikiurl <- "https://en.wikipedia.org/wiki/Ronaldo%E2%80%93Messi_rivalry#Club_statistics"
 wikipage <- read_html(wikiurl)
 ```
 
-*Creating a dataset of club goals*
+*Extracting html table that has Messi and Ronaldo club club goals*
 ```{r}
 #Extracting html table that has Messi and Ronaldo club goals
 tables.html <- html_nodes(wikipage,"table")
@@ -36,12 +35,13 @@ clgls <- html_table(tables.html[[5]], fill = TRUE) %>% as_tibble()
 
 *Creating a dataset of Messi Club Goals.*
 ```{r}
-#Slicing tibble so that it has properly named columns and has data on Messi from 2008 to 2018
 messiclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
-  slice(3:22)
+  slice(3:22) #Slicing tibble so that it has data on Messi from 2008 to 2018
+
 messiclgls <- messiclgls %>%
-  rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" )
+  rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" ) #Renaming columns
+
 messiclgls <- messiclgls%>%
   slice(-(1:3))%>%
   slice(-17)
@@ -49,12 +49,13 @@ messiclgls <- messiclgls%>%
 
 *Creating a dataset of Ronaldo Club Goals*
 ```{r}
-#Slicing tibble so that is has properly named columns and has data on Ronaldo from 2008 to 2018
 crisclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
-  slice(23:47)
+  slice(23:47) #Slicing tibble so that it has data on Ronaldo from 2008 to 2018
+
 crisclgls <- crisclgls %>%
-  rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" )
+  rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" ) #Renaming columns
+
 crisclgls <- crisclgls%>%
   slice(-(1:3))%>%
   drop_na()
@@ -69,9 +70,11 @@ intgls <- html_table(tables.html[[8]], fill = TRUE) %>% as_tibble()
 ```{r}
 messiintgls <- intgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8)%>%
-  slice(3:19)
+  slice(3:19) #Slicing tibble so that it has data on Messi's stats for Argentina from 2008 to 2018
+
 messiintgls <- messiintgls %>%
-  rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8")
+  rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8") #Renaming columns
+
 messiintgls <- messiintgls%>%
   slice(-(1:2))
 ```
@@ -80,9 +83,11 @@ messiintgls <- messiintgls%>%
 ```{r}
 crisintgls <- intgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8)%>%
-  slice(23:41)
+  slice(23:41) ##Slicing tibble so that it has data on Ronaldo's stats for Portugal from 2008 to 2018
+
 crisintgls <- crisintgls %>%
-  rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8")
+  rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8") #Renaming columns
+
 crisintgls <- crisintgls%>%
   slice(-(1:2))
 ```
@@ -97,6 +102,7 @@ pageCalendar <- read_html(urlCalendar)
 ```{r}
 div.html <- html_nodes(pageCalendar, "ul")
 ```
+
 *Getting all of messi's and ronaldo's stats from the ul parent nodes*
 ```{r}
 messi <- html_nodes(pageCalendar, ".messi.stats")
@@ -137,6 +143,7 @@ MClubs <- messiStatsparse%>%
 MCountries <- messiStatsparse%>%
   filter(type == "Country")
 ```
+
 
 ```{r}
 MTotals <- MTotals %>%
