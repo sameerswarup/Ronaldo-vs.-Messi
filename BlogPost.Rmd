@@ -54,7 +54,7 @@ MessiRonaldoComplete <- read_csv("MessiRonaldoComplete.csv")
 Trophy_Comparison <- read_csv("Trophy Comparison.csv")
 ```
 
-###Introduction 
+### Introduction 
 
 Cristiano Ronaldo and Lionel Messi are inarguably the two best soccer players in the world right now. They have shared the Ballon D’or (the annual award for the best player in soccer) between each other for ten years from 2008-2017. Who is better between the two of them is a topic of frequent debate between many soccer enthusiasts. In fact, many articles, blog posts and websites are dedicated to providing continually updated statistics including goals, assists and trophies won to give evidence about who is the better player between the two. 
 
@@ -62,7 +62,7 @@ Our blog also aims to compare the performance of the two players over their play
 
 ![](https://mirage.mathcs.carleton.edu/s/f3e9d4dcd233b8eecc390/files/Math285/Assignments/pair-homework-3-pair-homework-3-team-3/Picture.jpg)
 
-###Datasets
+### Datasets
 
 ```{r, echo= FALSE}
 ui <- fluidPage(
@@ -130,9 +130,9 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
-###Data Visualization
+### Data Visualization
 
-####Interactive Scatterplot comparing the two players over a variety of statistics (Total Appearances, Country Assists, Club Goals etc)
+#### Interactive Scatterplot comparing the two players over a variety of statistics (Total Appearances, Country Assists, Club Goals etc)
 
 ```{r,echo=FALSE}
 fluidPage(
@@ -180,7 +180,7 @@ output$hover_data_5 <- renderTable({
 
 ```
 
-####Distributions comparing the two players over a variety of statistics when they were both playing in the Spanish National League
+#### Distributions comparing the two players over a variety of statistics when they were both playing in the Spanish National League
 
 ```{r,echo=FALSE}
 #LaLiga
@@ -202,7 +202,7 @@ renderPlot({
 })
 ```
 
-####Distributions comparing the two players over a variety of statistics in the European Cup/Champions League.
+#### Distributions comparing the two players over a variety of statistics in the European Cup/Champions League.
 
 ```{r,echo=FALSE}
 #UCL
@@ -224,7 +224,7 @@ renderPlot({
 })
 ```
 
-###Statistical Learning
+### Statistical Learning
 
 *For a detailed understanding of our statistical learning methodology, review the file `Scraping and Analysis.Rmd` in our repository.*
 
