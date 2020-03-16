@@ -255,7 +255,6 @@ write_csv(WithAward, "MessiRonaldoComplete.csv")
 ```
 
 
-
 *Scraping data on Messi goals in competitions.*
 ```{r}
 messiClubStatsURL <- "https://www.transfermarkt.us/lionel-messi/detaillierteleistungsdaten/spieler/28003"
@@ -273,12 +272,8 @@ messiTable.html <- html_nodes(messiClubStatsPage, "table")
 messiLaLiga <- html_table(messiTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
 messiLaLiga <- messiLaLiga %>% select(Season, Club, ...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:11)
-```
-
-```{r}
-messiCopaDelRey <-html_table(messiTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
-
-messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+messiLaLiga <- messiLaLiga %>%
+  mutate(Player = "Messi")
 ```
 
 *Scraping data on Ronaldo goals in competitions.*
@@ -298,67 +293,19 @@ ronaldoTable.html <- html_nodes(ronaldoClubStatsPage, "table")
 ronaldoLaLiga <- html_table(ronaldoTable.html[[1]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
 ronaldoLaLiga <- ronaldoLaLiga %>% select(Season, Club, ...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:11)
+ronaldoLaLiga <- ronaldoLaLiga %>%
+  mutate(Player = "Ronaldo")
 ```
-
-```{r}
-ronaldoCopaDelRey <-html_table(ronaldoTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
-
-ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
-```
-
 
 *Join the Messi and Ronaldo datasets for each competition*
 ```{r}
 #LaLiga
-messiAndRonaldoLaLiga <- left_join(messiLaLiga, ronaldoLaLiga, by = "Season")
-
-messiAndRonaldoLaLiga <- messiAndRonaldoLaLiga %>% rename(messiAppearances = "Appearances.x",
-                                                          messiGoals = "Goals.x",
-                                                          messiAssists = "Assists.x", 
-                                                          ronaldoAppearances = "Appearances.y",
-                                                          ronaldoGoals = "Goals.y",
-                                                          ronaldoAssists =   "Assists.y")
+messiAndRonaldoLaLiga <- rbind(messiLaLiga, ronaldoLaLiga)%>%
+  select(Season, Player, Appearances, Goals, Assists)
 ```
 
 ```{r}
-messiAndRonaldoLaLigaLong <- gather(messiAndRonaldoLaLiga, key = "Player", value = "Appearances", messiAppearances, ronaldoAppearances)
-
-messiAndRonaldoLaLigaLong <- gather(messiAndRonaldoLaLigaLong, key = "PlayerGoals", value = "Goals", messiGoals, ronaldoGoals)
-
-messiAndRonaldoLaLigaLong <- gather(messiAndRonaldoLaLigaLong, key = "PlayerAssists", value = "Assists", messiAssists, ronaldoAssists)
-```
-
-```{r}
-messiAndRonaldoLaLigaLong$Player <- as.factor(messiAndRonaldoLaLigaLong$Player)
-
-levels(messiAndRonaldoLaLigaLong$Player)[levels(messiAndRonaldoLaLigaLong$Player) == "messiAppearances"] <- "Messi"
-
-levels(messiAndRonaldoLaLigaLong$Player)[levels(messiAndRonaldoLaLigaLong$Player) == "ronaldoAppearances"] <- "Ronaldo"
-```
-
-```{r}
-messiAndRonaldoLaLigaLong$PlayerGoals <- NULL
-messiAndRonaldoLaLigaLong$PlayerAssists <- NULL
-```
-
-```{r}
-messiAndRonaldoLaLigaLong <- messiAndRonaldoLaLigaLong %>% slice(-(19:72))
-```
-
-```{r}
-write_csv(messiAndRonaldoLaLigaLong, "messiAndRonaldoLaLigaLong.csv")
-```
-
-```{r}
-ronaldoCopaDelRey <-html_table(ronaldoTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
-
-ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
-```
-
-```{r}
-messiCopaDelRey <-html_table(messiTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
-
-messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+write_csv(messiAndRonaldoLaLiga, "messiAndRonaldoLaLiga.csv")
 ```
 
 ```{r}
@@ -366,7 +313,8 @@ messiChampionsLeague <-  html_table(messiTable.html[[3]], fill = TRUE) %>% as_ti
 
 messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club,...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:19)
 
-messiChampionsLeague <- messiChampionsLeague %>% slice(-(c(4,5,10,11,14,15,17)))
+messiChampionsLeague <- messiChampionsLeague %>% slice(-(c(4,5,10,11,14,15,17)))%>%
+  mutate(Player = "Messi")
 ```
 
 ```{r}
@@ -374,44 +322,18 @@ ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% a
 
 ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club,...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:19)
 
-ronaldoChampionsLeague <- ronaldoChampionsLeague %>% slice(-(c(2,3,5,8,9,16,17)))
+ronaldoChampionsLeague <- ronaldoChampionsLeague %>% slice(-(c(2,3,5,8,9,16,17)))%>%
+  mutate(Player = "Ronaldo")
 ```
 
 ```{r}
 #ChampionsLeague
-messiAndRonaldoUEFA <- left_join(messiChampionsLeague, ronaldoChampionsLeague, by = "Season")
-
-messiAndRonaldoUEFA <- messiAndRonaldoUEFA %>% rename(messiAppearances = "Appearances.x",
-                                                          messiGoals = "Goals.x",
-                                                          messiAssists = "Assists.x", 
-                                                          ronaldoAppearances = "Appearances.y",
-                                                          ronaldoGoals = "Goals.y",
-                                                          ronaldoAssists =   "Assists.y")
+messiAndRonaldoUEFA <- rbind(messiChampionsLeague, ronaldoChampionsLeague)%>%
+  mutate(Assists = parse_number(Assists) )
 ```
 
 ```{r}
-messiAndRonaldoUEFALong <- gather(messiAndRonaldoUEFA, key = "Player", value = "Appearances", messiAppearances, ronaldoAppearances)
-
-messiAndRonaldoUEFALong <- gather(messiAndRonaldoUEFALong, key = "PlayerGoals", value = "Goals", messiGoals, ronaldoGoals)
-
-messiAndRonaldoUEFALong <- gather(messiAndRonaldoUEFALong, key = "PlayerAssists", value = "Assists", messiAssists, ronaldoAssists)
-```
-
-```{r}
-messiAndRonaldoUEFALong$Player <- as.factor(messiAndRonaldoUEFALong$Player)
-
-levels(messiAndRonaldoUEFALong$Player)[levels(messiAndRonaldoUEFALong$Player) == "messiAppearances"] <- "Messi"
-
-levels(messiAndRonaldoUEFALong$Player)[levels(messiAndRonaldoUEFALong$Player) == "ronaldoAppearances"] <- "Ronaldo"
-```
-
-```{r}
-messiAndRonaldoUEFALong$PlayerGoals <- NULL
-messiAndRonaldoUEFALong$PlayerAssists <- NULL
-```
-
-```{r}
-messiAndRonaldoUEFALong <- messiAndRonaldoUEFALong %>% slice(-(21:80))
+write_csv(messiAndRonaldoUEFA, "messiAndRonaldoUEFA.csv")
 ```
 
 ##Statistical Learning on the Dataset

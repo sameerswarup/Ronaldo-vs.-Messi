@@ -47,7 +47,8 @@ write_csv(MessiRonaldoLonger, "MessiRonaldoLonger.csv")
 ```
 
 ```{r}
-messiAndRonaldoLaLigaLong <- read_csv("messiAndRonaldoLaLigaLong.csv")
+messiAndRonaldoLaLiga <- read_csv("messiAndRonaldoLaLiga.csv")
+messiAndRonaldoUEFA <- read_csv("messiAndRonaldoUEFA.csv")
 ```
 
 ```{r}
@@ -122,9 +123,9 @@ fluidPage(
         wellPanel(                
           # data widget: selecting the variables 
           selectInput("y_6", label = "y-axis Variable:",
-             choices = c("Appearances",
-                         "Goals",
-                         "Assists"),
+             choices = c("Appearances" = "Appearances",
+                         "Goals" = "Goals",
+                         "Assists" = "Assists"),
              selected="Appearances")
         )
       ),
@@ -141,7 +142,7 @@ fluidPage(
 
 # render plot
 output$gap_plot_6 <- renderPlot({
-  ggplot(messiAndRonaldoLaLigaLong, aes_string(x = "Season", y = input$y_6, color= "Player")) + 
+  ggplot(messiAndRonaldoLaLiga, aes_string(x = "Season", y = input$y_6, color= "Player")) + 
     geom_point() + 
     geom_smooth(se = FALSE) +
     theme(axis.text=element_text(size=16),
@@ -149,6 +150,45 @@ output$gap_plot_6 <- renderPlot({
 })
 ## render text for hovered point(s)
 output$hover_data_6 <- renderTable({
-   nearPoints(MessiRonaldoLonger, input$hover_coord_6)[,1:6]
+   nearPoints(messiAndRonaldoLaLiga, input$hover_coord_6)[,1:5]
+  })
+```
+
+```{r}
+#UCL
+fluidPage(
+  fluidRow( 
+    column(width = 3,   
+        wellPanel(                
+          # data widget: selecting the variables 
+          selectInput("y_7", label = "y-axis Variable:",
+             choices = c("Appearances" = "Appearances",
+                         "Goals" = "Goals",
+                         "Assists" = "Assists"),
+             selected="Appearances")
+        )
+      ),
+    column(width = 8, 
+             plotOutput("gap_plot_7",hover="hover_coord_7")
+      )
+    ),
+  fluidRow(
+      column(width = 12, 
+             tableOutput("hover_data_7")
+      )
+  )
+)
+
+# render plot
+output$gap_plot_7 <- renderPlot({
+  ggplot(messiAndRonaldoUEFA, aes_string(x = "Season", y = input$y_7, color= "Player")) + 
+    geom_point() + 
+    geom_smooth(se = FALSE) +
+    theme(axis.text=element_text(size=16),
+          axis.title=element_text(size=16) )
+})
+## render text for hovered point(s)
+output$hover_data_7 <- renderTable({
+   nearPoints(messiAndRonaldoUEFA, input$hover_coord_7)[,1:5]
   })
 ```
