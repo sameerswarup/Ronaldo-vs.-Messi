@@ -317,7 +317,6 @@ ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals
 ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
 ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
-<<<<<<< HEAD
 ```
 
 *Join the Messi and Ronaldo datasets for each competition*
