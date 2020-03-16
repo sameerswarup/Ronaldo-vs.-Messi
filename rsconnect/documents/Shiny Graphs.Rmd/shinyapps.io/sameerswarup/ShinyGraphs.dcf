@@ -1,0 +1,12 @@
+name: ShinyGraphs
+title: ShinyGraphs
+username:
+account: sameerswarup
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1954737
+bundleId: 2887064
+url: https://sameerswarup.shinyapps.io/ShinyGraphs/
+when: 1584375155.1215
+asMultiple: FALSE
+asStatic: FALSE

@@ -37,7 +37,7 @@ clgls <- html_table(tables.html[[5]], fill = TRUE) %>% as_tibble()
 ```{r}
 messiclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
-  slice(3:22) #Slicing tibble so that it has data on Messi from 2008 to 2018
+  slice(3:22) #Slicing tibble so that it has data on Messi from 2004 to 2020
 
 messiclgls <- messiclgls %>%
   rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" ) #Renaming columns
@@ -51,7 +51,7 @@ messiclgls <- messiclgls%>%
 ```{r}
 crisclgls <- clgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12)%>%
-  slice(23:47) #Slicing tibble so that it has data on Ronaldo from 2008 to 2018
+  slice(23:47) #Slicing tibble so that it has club data on Ronaldo from 2002 to 2020
 
 crisclgls <- crisclgls %>%
   rename(Club = "X1", Season = "X2", LeagueApps = "X3", LeagueGoals = "X4", CupApps = "X5", CupGoals = "X6",EuropeApps = "X7", EuropeGoals = "X8",OtherApps = "X9", OtherGoals = "X10",TotalApps = "X11", TotalGoals = "X12" ) #Renaming columns
@@ -70,7 +70,7 @@ intgls <- html_table(tables.html[[8]], fill = TRUE) %>% as_tibble()
 ```{r}
 messiintgls <- intgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8)%>%
-  slice(3:19) #Slicing tibble so that it has data on Messi's stats for Argentina from 2008 to 2018
+  slice(3:19) #Slicing tibble so that it has data on Messi's stats for Argentina from 2005 to 2019
 
 messiintgls <- messiintgls %>%
   rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8") #Renaming columns
@@ -83,7 +83,7 @@ messiintgls <- messiintgls%>%
 ```{r}
 crisintgls <- intgls  %>%
   select(X1,X2,X3,X4,X5,X6,X7,X8)%>%
-  slice(23:41) ##Slicing tibble so that it has data on Ronaldo's stats for Portugal from 2008 to 2018
+  slice(23:41) ##Slicing tibble so that it has data on Ronaldo's stats for Portugal from 2003 to 2019
 
 crisintgls <- crisintgls %>%
   rename(NationalTeam= "X1", Year = "X2", CompApps= "X3", CompGoals = "X4", FrndApps = "X5", FrndGoals = "X6",TotalApps = "X7", TotalGoals = "X8") #Renaming columns
@@ -144,7 +144,7 @@ MCountries <- messiStatsparse%>%
   filter(type == "Country")
 ```
 
-
+*Cleaning dataset to only contain total apps, goals and assists for Messi from 2002 to 2020.*
 ```{r}
 MTotals <- MTotals %>%
   select(apps,assists,goals) %>%
@@ -153,6 +153,7 @@ MTotals <- MTotals %>%
   select(Year, MTotApps, MTotAssists, MTotGoals)
 ```
 
+*Cleaning dataset to only contain club apps, goals and assists for Messi from 2002 to 2020.*
 ```{r}
 MClubs <- MClubs %>%
   select(apps,assists,goals) %>%
@@ -161,6 +162,7 @@ MClubs <- MClubs %>%
   select(Year, MClubApps, MClubAssists, MClubGoals)
 ```
 
+*Cleaning dataset to only contain international apps, goals and assists for Messi from 2002 to 2020.*
 ```{r}
 MCountries <- MCountries %>%
   select(apps,assists,goals) %>%
@@ -169,6 +171,7 @@ MCountries <- MCountries %>%
   select(Year, MCoApps, MCoAssists, MCoGoals)
 ```
 
+*Creating dataset and writing csv that has apps, goals and assists for Messi in club, country and total.*
 ```{r}
 MessiPartial <- left_join(MTotals,MClubs, by = "Year")
 MessiComplete <- left_join(MessiPartial, MCountries, by = "Year")
