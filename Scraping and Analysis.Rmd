@@ -281,13 +281,6 @@ messiCopaDelRey <-html_table(messiTable.html[[2]], fill = TRUE) %>% as_tibble(.n
 messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
 
-```{r}
-messiChampionsLeague <-  html_table(messiTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
-
-messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
-```
-
-
 *Scraping data on Ronaldo goals in competitions.*
 ```{r}
 ronaldoClubStatsURL <- "https://www.transfermarkt.us/cristiano-ronaldo/detaillierteleistungsdaten/spieler/8198"
@@ -313,11 +306,6 @@ ronaldoCopaDelRey <-html_table(ronaldoTable.html[[2]], fill = TRUE) %>% as_tibbl
 ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
 ```
 
-```{r}
-ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
-
-ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
-```
 
 *Join the Messi and Ronaldo datasets for each competition*
 ```{r}
@@ -372,7 +360,7 @@ messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "
 ```{r}
 messiChampionsLeague <-  html_table(messiTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:19)
+messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club,...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:19)
 
 messiChampionsLeague <- messiChampionsLeague %>% slice(-(c(4,5,10,11,14,15,17)))
 ```
@@ -380,13 +368,46 @@ messiChampionsLeague <- messiChampionsLeague %>% slice(-(c(4,5,10,11,14,15,17)))
 ```{r}
 ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
-ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:19)
+ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club,...6, ...7) %>% rename(Appearances = "Club", Goals = "...6", Assists = "...7") %>% drop_na() %>% slice(3:19)
 
 ronaldoChampionsLeague <- ronaldoChampionsLeague %>% slice(-(c(2,3,5,8,9,16,17)))
 ```
 
 ```{r}
+#ChampionsLeague
+messiAndRonaldoUEFA <- left_join(messiChampionsLeague, ronaldoChampionsLeague, by = "Season")
 
+messiAndRonaldoUEFA <- messiAndRonaldoUEFA %>% rename(messiAppearances = "Appearances.x",
+                                                          messiGoals = "Goals.x",
+                                                          messiAssists = "Assists.x", 
+                                                          ronaldoAppearances = "Appearances.y",
+                                                          ronaldoGoals = "Goals.y",
+                                                          ronaldoAssists =   "Assists.y")
+```
+
+```{r}
+messiAndRonaldoUEFALong <- gather(messiAndRonaldoUEFA, key = "Player", value = "Appearances", messiAppearances, ronaldoAppearances)
+
+messiAndRonaldoUEFALong <- gather(messiAndRonaldoUEFALong, key = "PlayerGoals", value = "Goals", messiGoals, ronaldoGoals)
+
+messiAndRonaldoUEFALong <- gather(messiAndRonaldoUEFALong, key = "PlayerAssists", value = "Assists", messiAssists, ronaldoAssists)
+```
+
+```{r}
+messiAndRonaldoUEFALong$Player <- as.factor(messiAndRonaldoUEFALong$Player)
+
+levels(messiAndRonaldoUEFALong$Player)[levels(messiAndRonaldoUEFALong$Player) == "messiAppearances"] <- "Messi"
+
+levels(messiAndRonaldoUEFALong$Player)[levels(messiAndRonaldoUEFALong$Player) == "ronaldoAppearances"] <- "Ronaldo"
+```
+
+```{r}
+messiAndRonaldoUEFALong$PlayerGoals <- NULL
+messiAndRonaldoUEFALong$PlayerAssists <- NULL
+```
+
+```{r}
+messiAndRonaldoUEFALong <- messiAndRonaldoUEFALong %>% slice(-(21:80))
 ```
 
 ##Statistical Learning on the Dataset
