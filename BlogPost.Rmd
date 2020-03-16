@@ -51,6 +51,7 @@ write_csv(MessiRonaldoLonger, "MessiRonaldoLonger.csv")
 messiAndRonaldoLaLiga <- read_csv("messiAndRonaldoLaLiga.csv")
 messiAndRonaldoUEFA <- read_csv("messiAndRonaldoUEFA.csv")
 MessiRonaldoComplete <- read_csv("MessiRonaldoComplete.csv")
+Trophy_Comparison <- read_csv("Trophy Comparison.csv")
 ```
 
 ###Introduction 
@@ -61,24 +62,77 @@ Our blog also aims to compare the performance of the two players over their play
 
 ![](https://mirage.mathcs.carleton.edu/s/f3e9d4dcd233b8eecc390/files/Math285/Assignments/pair-homework-3-pair-homework-3-team-3/Picture.jpg)
 
+###Datasets
 
-```{r}
-inputPanel(
-  selectInput("x_1", label = "Choose a dataset",
-              choices = c("Messi vs Ronaldo" = "MessiRonaldoLonger",
-                          "LaLiga" = "messiAndRonaldoLaLiga",
-                          "UEFA" = "messiAndRonaldoUEFA")
-              ),
-  fluidRow(
-    column(width = 12,
-           tableOutput("datasets"))
+```{r, echo= FALSE}
+ui <- fluidPage(
+  title = "Different Datasets",
+  sidebarLayout(
+    sidebarPanel(
+      conditionalPanel(
+        'input.dataset === "MessiRonaldoComplete"',
+        checkboxGroupInput("show_vars", "Columns in MessiRonaldoComplete to show:",
+                           names(MessiRonaldoComplete), selected = names(MessiRonaldoComplete))
+      ),
+      conditionalPanel(
+        'input.dataset === "MessiRonaldoLonger"',
+        checkboxGroupInput("show_vars1", "Columns in MessiRonaldoLonger to show:",
+                           names(MessiRonaldoLonger), selected = names(MessiRonaldoLonger))
+      ),
+       conditionalPanel(
+        'input.dataset === "Trophy_Comparison"',
+        checkboxGroupInput("show_vars2", "Columns in Trophy_Comparison to show:",
+                           names(Trophy_Comparison), selected = names(Trophy_Comparison))
+      ),
+       conditionalPanel(
+        'input.dataset === "messiAndRonaldoUEFA"'
+      ),
+      conditionalPanel(
+        'input.dataset === "messiAndRonaldoLaLiga"'
+      )
+    ),
+    mainPanel(
+      tabsetPanel(
+        id = 'dataset',
+        tabPanel("MessiRonaldoComplete", DT::dataTableOutput("mytable1")),
+        tabPanel("MessiRonaldoLonger", DT::dataTableOutput("mytable2")),
+        tabPanel("Trophy_Comparison", DT::dataTableOutput("mytable3")),
+        tabPanel("messiAndRonaldoUEFA", DT::dataTableOutput("mytable4")),
+        tabPanel("messiAndRonaldoLaLiga", DT::dataTableOutput("mytable5"))
+      )
+    )
   )
 )
-output$datasets <- renderTable({
-  input$x_1
+
+server <- function(input, output) {
   
-})
+  output$mytable1 <- DT::renderDataTable({
+    DT::datatable(MessiRonaldoComplete[, input$show_vars, drop = FALSE])
+  })
+  
+  output$mytable2 <- DT::renderDataTable({
+    DT::datatable(MessiRonaldoLonger[, input$show_vars1, drop = FALSE])
+  })
+  output$mytable3 <- DT::renderDataTable({
+    DT::datatable(Trophy_Comparison[, input$show_vars2, drop = FALSE])
+  })
+  output$mytable4 <- DT::renderDataTable({
+    DT::datatable(messiAndRonaldoUEFA)
+  })
+  
+  # customize the length drop-down menu; display 5 rows per page by default
+  output$mytable5 <- DT::renderDataTable({
+    DT::datatable(messiAndRonaldoLaLiga)
+  })
+  
+}
+
+shinyApp(ui, server)
 ```
+
+###Data Visualization
+
+####Interactive Scatterplot comparing the two players over a variety of statistics (Total Appearances, Country Assists, Club Goals etc)
 
 ```{r,echo=FALSE}
 fluidPage(
@@ -96,9 +150,9 @@ fluidPage(
                          "Country Appearances" ="CoApps",
                          "Country Assists" ="CoAssists",
                          "Country Goals" ="CoGoals"), 
-             selected="Total Appearances"),
-        )
-      ),
+             selected="Total Appearances")
+      )
+    ),
     column(width = 8, 
              plotOutput("gap_plot_5",hover="hover_coord_5")
       )
@@ -107,14 +161,15 @@ fluidPage(
       column(width = 12, 
              tableOutput("hover_data_5")
       )
-  )
+  )    
 )
+
 
 # render plot
 output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color = "Player")) + 
     geom_point() + 
-    geom_smooth() +
+    geom_smooth(se = FALSE) +
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
 })
@@ -124,6 +179,8 @@ output$hover_data_5 <- renderTable({
   })
 
 ```
+
+####Distributions comparing the two players over a variety of statistics when they were both playing in the Spanish National League
 
 ```{r,echo=FALSE}
 #LaLiga
@@ -144,6 +201,8 @@ renderPlot({
     facet_wrap(~Player)
 })
 ```
+
+####Distributions comparing the two players over a variety of statistics in the European Cup/Champions League.
 
 ```{r,echo=FALSE}
 #UCL
