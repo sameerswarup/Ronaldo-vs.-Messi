@@ -13,47 +13,47 @@ library(shiny)
 ```
 
 
-```{r}
+```{r,include=FALSE}
 #Comparing distributions of different statistics
 #Gathering the dataframe. Converting it to a longer dataframe to compare the two players on the same plot.  
 
 RonaldoComplete <- read_csv("RonaldoComplete.csv")
 ```
 
-```{r}
+```{r,include=FALSE}
 MessiComplete <- read_csv("MessiComplete.csv")
 ```
 
-```{r}
+```{r,include=FALSE}
 MessiComplete1 <- MessiComplete %>%
   rename(TotApps = "MTotApps", TotAssists = "MTotAssists", TotGoals = "MTotGoals",ClubApps = "MClubApps",ClubAssists = "MClubAssists",ClubGoals = "MClubGoals",CoApps = "MCoApps",CoAssists = "MCoAssists",CoGoals = "MCoGoals")%>%
   mutate(Player = rep(c("Messi"), nrow(MessiComplete)))
 ```
 
-```{r}
+```{r,include=FALSE}
 RonaldoComplete1 <- RonaldoComplete %>%
   rename(TotApps = "RTotApps", TotAssists = "RTotAssists", TotGoals = "RTotGoals",ClubApps = "RClubApps",ClubAssists = "RClubAssists",ClubGoals = "RClubGoals",CoApps = "RCoApps",CoAssists = "RCoAssists",CoGoals = "RCoGoals")%>%
   mutate(Player = rep(c("Ronaldo"), nrow(RonaldoComplete)))
 ```
 
-```{r}
+```{r,include=FALSE}
 #Longer version of the MessiRonaldoComplete.csv dataset which only contains the quantitative predictor variables.
 MessiRonaldoLonger <- rbind(MessiComplete1,RonaldoComplete1) %>%
   select(Year, Player, TotApps,TotAssists,TotGoals,ClubApps,
          ClubAssists,ClubGoals,CoApps,CoAssists,CoGoals)
 ```
 
-```{r}
+```{r,include=FALSE}
 write_csv(MessiRonaldoLonger, "MessiRonaldoLonger.csv")
 ```
 
-```{r}
+```{r,include=FALSE}
 #Importing datasets comparing their performance in specific comptetions.
 messiAndRonaldoLaLiga <- read_csv("messiAndRonaldoLaLiga.csv")
 messiAndRonaldoUEFA <- read_csv("messiAndRonaldoUEFA.csv")
 ```
 
-```{r}
+```{r,echo=FALSE}
 inputPanel(
   selectInput("x_2", label = "Type of Stat", 
              choices = c("Total Appearances" ="TotApps",
@@ -73,7 +73,7 @@ renderPlot({
 })
 ```
 
-```{r}
+```{r,echo=FALSE}
 fluidPage(
   fluidRow( 
     column(width = 3,   
@@ -100,12 +100,6 @@ fluidPage(
       column(width = 12, 
              tableOutput("hover_data_5")
       ),
-  mainPanel(
-    tabsetPanel(type = "tab",
-                tabPanel("Plot", plotOutput("gap_plot_5")),
-                tabPanel("Dataset",tableOutput("data"))
-                )
-   )
   )
  )
 
@@ -123,7 +117,7 @@ fluidPage(
 
 ```
 
-```{r}
+```{r,echo=FALSE}
 #LaLiga
 fluidPage(
   fluidRow( 
@@ -143,7 +137,7 @@ renderPlot({
 })
 ```
 
-```{r}
+```{r,echo=FALSE}
 #UCL
 fluidPage(
   fluidRow( 
