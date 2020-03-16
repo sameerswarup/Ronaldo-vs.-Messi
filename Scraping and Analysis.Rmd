@@ -18,6 +18,7 @@ library(randomForest)
 library(caret)
 library(partykit)
 library(rpart)
+library(rsconnect)
 ```
 
 *Scraping data from Wikipedia page on Ronaldo vs Messi rivalry*
@@ -480,40 +481,5 @@ eval_df <- map_df(t, eval_fun, test = BDor_test2)
 glimpse(eval_df)
 ```
 
-All thresholds return the same value of accuracy, precision, sensitivity, and specificity. Moreover, the REuropean Cup variable seems to almost perfectly capture the behavior of Ballon D'or. Therefore, we will try to reduce the number of predictor variables we are using based on our background knowledge to a number which is lesser than the number of observations to see if that improves our model.
-
-We deem that the number of appearances a player makes for either their club or country, the number of times they assist another player in scoring a goal and whether their team wins the Domestic Cup or not are not very important in determining whether they should win the Ballon D'or or not. Therefore, we will fit a logistic regression model without these predictor variables.
-
-```{r}
-BDor_logistic2 <- glm(BallonDor~ MClubGoals +MCoGoals + MEuropeanCup + MLeague+ RClubGoals + RCoGoals+ REuropeanCup + RLeague, data=BDor_train, family = binomial)
-```
-
-```{r}
-BDor_test3 <- BDor_test %>% 
-  mutate(prob = predict(BDor_logistic , newdata = BDor_test, type = "response"),
-         prediction = ifelse(prob > 0.5, "Messi", "Ronaldo"),
-         prediction = fct_relevel(prediction, "Ronaldo", "Messi"))
-```
-
-###Determining the appropriate threshold level that maximizes accuracy. 
-```{r}
-t <- seq(0.05, 0.95, by = 0.05)
-eval_fun <- function(t, test) 
-  {test %>%
-  mutate(prediction = ifelse( prob > t, "Messi", "Ronaldo") ) %>%
-  summarize(threshold=t, 
-            accuracy = mean(prediction == BallonDor), 
-            sensitivity = sum(prediction == "Messi" & BallonDor == "Messi")/sum(BallonDor == "Messi"),
-            specificity = sum(prediction == "Ronaldo" & BallonDor == "Ronaldo")/sum(BallonDor == "Ronaldo"),
-            precision = sum(prediction == "Messi" & BallonDor == "Messi")/sum(prediction == "Messi"))
-}
-eval_df <- map_df(t, eval_fun, test = BDor_test3)
-glimpse(eval_df)
-```
-
-All thresholds still return the same value of accuracy, precision, sensitivity, and specificity. Moreover, the REuropean Cup variable still perfectly captures the behavior of Ballon D'or. However, we cannot remove this variable as the European Cup is the most important competition each year and if a player wins it they are almost guaranteed to win the Ballon D'or. For Cristiano Ronaldo, in particular, every year that he has been a part of the European Cup winning team, he has almost certainly won the Ballon D'or.
-Therefore, our model has illustrated how important the European Cup is in determining the winner of the Ballon D'or. It has given us evidence that when predicting the winner of the Ballon D'or a certain year, it is very important to consider whether the player won the European Cup with their team. If they did, then it is very likely that they will in fact win the Ballon D'or.
-
-
-
+All thresholds return the same value of accuracy, precision, sensitivity, and specificity. Therefore, we are using the threshold of 0.5. Also since we are getting correct predictions based on a Logistic Regression Model with all our variables, that is the model we will use to predict who should win the Ballon D'or. 
 
