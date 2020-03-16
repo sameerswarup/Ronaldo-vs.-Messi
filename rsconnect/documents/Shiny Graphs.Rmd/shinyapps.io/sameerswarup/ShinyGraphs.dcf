@@ -5,8 +5,8 @@ account: sameerswarup
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1954737
-bundleId: 2887219
+bundleId: 2887278
 url: https://sameerswarup.shinyapps.io/ShinyGraphs/
-when: 1584378503.86758
+when: 1584380138.14058
 asMultiple: FALSE
 asStatic: FALSE
