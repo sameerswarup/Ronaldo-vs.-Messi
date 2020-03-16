@@ -329,6 +329,58 @@ messiAndRonaldoLaLiga <- messiAndRonaldoLaLiga %>% rename(messiAppearances = "Ap
 ```
 
 ```{r}
-messiAndRonaldoLaLiga$Appearances <- paste(messiAndRonaldoLaLiga$messiAppearances, 
-                                           messiAndRonaldoLaLiga$ronaldoAppearances)
+messiAndRonaldoLaLigaLong <- gather(messiAndRonaldoLaLiga, key = "Player", value = "Appearances", messiAppearances, ronaldoAppearances)
+
+messiAndRonaldoLaLigaLong <- gather(messiAndRonaldoLaLigaLong, key = "PlayerGoals", value = "Goals", messiGoals, ronaldoGoals)
+
+messiAndRonaldoLaLigaLong <- gather(messiAndRonaldoLaLigaLong, key = "PlayerAssists", value = "Assists", messiAssists, ronaldoAssists)
+```
+
+```{r}
+messiAndRonaldoLaLigaLong$Player <- as.factor(messiAndRonaldoLaLigaLong$Player)
+
+levels(messiAndRonaldoLaLigaLong$Player)[levels(messiAndRonaldoLaLigaLong$Player) == "messiAppearances"] <- "Messi"
+
+levels(messiAndRonaldoLaLigaLong$Player)[levels(messiAndRonaldoLaLigaLong$Player) == "ronaldoAppearances"] <- "Ronaldo"
+```
+
+```{r}
+messiAndRonaldoLaLigaLong$PlayerGoals <- NULL
+messiAndRonaldoLaLigaLong$PlayerAssists <- NULL
+```
+
+```{r}
+messiAndRonaldoLaLigaLong <- messiAndRonaldoLaLigaLong %>% slice(-(19:72))
+```
+
+```{r}
+ronaldoCopaDelRey <-html_table(ronaldoTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
+
+ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+```
+
+```{r}
+messiCopaDelRey <-html_table(messiTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
+
+messiCopaDelRey <- messiCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)
+```
+
+```{r}
+messiChampionsLeague <-  html_table(messiTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
+
+messiChampionsLeague <- messiChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:19)
+
+messiChampionsLeague <- messiChampionsLeague %>% slice(-(c(4,5,10,11,14,15,17)))
+```
+
+```{r}
+ronaldoChampionsLeague <-  html_table(ronaldoTable.html[[3]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
+
+ronaldoChampionsLeague <- ronaldoChampionsLeague %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:19)
+
+ronaldoChampionsLeague <- ronaldoChampionsLeague %>% slice(-(c(2,3,5,8,9,16,17)))
+```
+
+```{r}
+
 ```
