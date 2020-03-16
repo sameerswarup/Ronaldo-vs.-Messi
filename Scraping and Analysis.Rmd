@@ -402,8 +402,12 @@ levels(messiAndRonaldoUEFALong$Player)[levels(messiAndRonaldoUEFALong$Player) ==
 ```
 
 ```{r}
+messiAndRonaldoUEFALong$PlayerGoals <- NULL
+messiAndRonaldoUEFALong$PlayerAssists <- NULL
+```
 
-
+```{r}
+messiAndRonaldoUEFALong <- messiAndRonaldoUEFALong %>% slice(-(21:80))
 ```
 
 ##Statistical Learning on the Dataset

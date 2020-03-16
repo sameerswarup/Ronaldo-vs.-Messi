@@ -110,14 +110,17 @@ output$hover_data_5 <- renderTable({
 ```
 
 ```{r}
+#LaLiga
 fluidPage(
   fluidRow( 
     column(width = 3,   
         wellPanel(                
           # data widget: selecting the variables 
           selectInput("y_5", label = "y-axis Variable:",
-             choices = "Season", 
-             selected="Season")
+             choices = c("Appearances",
+                         "Goals",
+                         "Assists"),
+             selected="Appearances")
         )
       ),
     column(width = 8, 
@@ -133,7 +136,7 @@ fluidPage(
 
 # render plot
 output$gap_plot_5 <- renderPlot({
-  ggplot(messiAndRonaldoLaLiga, aes_string(x = "ronaldoGoals", y = "messiGoals", color= "Player")) + 
+  ggplot(messiAndRonaldoLaLigaLong, aes_string(x = "Season", y = input$y_5, color= "Player")) + 
     geom_point() + 
     geom_smooth() +
     theme(axis.text=element_text(size=16),
@@ -143,9 +146,4 @@ output$gap_plot_5 <- renderPlot({
 output$hover_data_5 <- renderTable({
    nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
   })
-```
-
-```{r}
-#LaLiga
-
 ```
