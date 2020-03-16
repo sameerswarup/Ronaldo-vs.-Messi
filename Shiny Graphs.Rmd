@@ -110,7 +110,6 @@ shinyUI(fluidPage(
 
 # render plot
 shinyServer(
-  
   output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
