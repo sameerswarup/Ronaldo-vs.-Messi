@@ -11,7 +11,7 @@ library(readr)
 library(tidyr)
 ```
 
-*Comparing distributions of different statistics by club*
+*Comparing distributions of different statistics*
 
 *Gathering the dataframe*
 
