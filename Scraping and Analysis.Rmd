@@ -501,8 +501,8 @@ BDor_logistic2 <- glm(BallonDor~ MClubGoals +MCoGoals + MEuropeanCup + MLeague+ 
 
 ```{r}
 BDor_test3 <- BDor_test %>% 
-  mutate(prob = predict(BDor_logistic , newdata = BDor_test, type = "response"),
-         prediction = ifelse(prob > 0.5, "Messi", "Ronaldo"),
+  mutate(prob = predict(BDor_logistic2, newdata = BDor_test, type = "response"),
+         prediction = ifelse(prob > 0.7, "Messi", "Ronaldo"),
          prediction = fct_relevel(prediction, "Ronaldo", "Messi"))
 ```
 
@@ -522,5 +522,6 @@ eval_df <- map_df(t, eval_fun, test = BDor_test3)
 glimpse(eval_df)
 ```
 
-All thresholds still return the same value of accuracy, precision, sensitivity, and specificity. Moreover, the REuropean Cup variable still perfectly captures the behavior of Ballon D'or. However, we cannot remove this variable as the European Cup is the most important competition each year and if a player wins it they are almost guaranteed to win the Ballon D'or. For Cristiano Ronaldo, in particular, every year that he has been a part of the European Cup winning team, he has almost certainly won the Ballon D'or.
+We see after revising the model, all thresholds do not return the same value of accuracy, precision, sensitivity, and specificity. For this model, thresholds above t = 0.7 do return a value of one for the accuracy, precision, sensitivity, and specificity. Therefore, we decide to use a threshold of 0.7 to decide which player should win the Ballon D'or. 
+However, the REuropean Cup variable still perfectly captures the behavior of Ballon D'or. But, we cannot remove this variable as the European Cup is the most important competition each year and if a player wins it they are almost guaranteed to win the Ballon D'or. For Cristiano Ronaldo, in particular, every year that he has been a part of the European Cup winning team, he has almost certainly won the Ballon D'or.
 Therefore, our model has illustrated how important the European Cup is in determining the winner of the Ballon D'or. It has given us evidence that when predicting the winner of the Ballon D'or a certain year, it is very important to consider whether the player won the European Cup with their team. If they did, then it is very likely that they will in fact win the Ballon D'or.

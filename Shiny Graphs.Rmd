@@ -1,5 +1,5 @@
 ---
-title: "Shiny Graphs"
+title: "Ronaldo or Messi: A Data Science Perspective "
 output: html_document
 runtime: shiny
 ---
@@ -13,45 +13,56 @@ library(shiny)
 ```
 
 
-```{r}
+```{r, include = FALSE}
 #Comparing distributions of different statistics
 #Gathering the dataframe. Converting it to a longer dataframe to compare the two players on the same plot.  
 
 RonaldoComplete <- read_csv("RonaldoComplete.csv")
 ```
 
-```{r}
+```{r, include=FALSE}
 MessiComplete <- read_csv("MessiComplete.csv")
 ```
 
-```{r}
+```{r, include=FALSE}
 MessiComplete1 <- MessiComplete %>%
   rename(TotApps = "MTotApps", TotAssists = "MTotAssists", TotGoals = "MTotGoals",ClubApps = "MClubApps",ClubAssists = "MClubAssists",ClubGoals = "MClubGoals",CoApps = "MCoApps",CoAssists = "MCoAssists",CoGoals = "MCoGoals")%>%
   mutate(Player = rep(c("Messi"), nrow(MessiComplete)))
 ```
 
-```{r}
+```{r, include=FALSE}
 RonaldoComplete1 <- RonaldoComplete %>%
   rename(TotApps = "RTotApps", TotAssists = "RTotAssists", TotGoals = "RTotGoals",ClubApps = "RClubApps",ClubAssists = "RClubAssists",ClubGoals = "RClubGoals",CoApps = "RCoApps",CoAssists = "RCoAssists",CoGoals = "RCoGoals")%>%
   mutate(Player = rep(c("Ronaldo"), nrow(RonaldoComplete)))
 ```
 
-```{r}
+```{r, include=FALSE}
 #Longer version of the MessiRonaldoComplete.csv dataset which only contains the quantitative predictor variables.
 MessiRonaldoLonger <- rbind(MessiComplete1,RonaldoComplete1) %>%
   select(Year, Player, TotApps,TotAssists,TotGoals,ClubApps,
          ClubAssists,ClubGoals,CoApps,CoAssists,CoGoals)
 ```
 
-```{r}
+```{r,include=FALSE}
 write_csv(MessiRonaldoLonger, "MessiRonaldoLonger.csv")
 ```
 
-```{r}
+```{r, include=FALSE}
 #Importing datasets comparing their performance in specific comptetions.
 messiAndRonaldoLaLiga <- read_csv("messiAndRonaldoLaLiga.csv")
 messiAndRonaldoUEFA <- read_csv("messiAndRonaldoUEFA.csv")
+MessiRonaldoComplete <- read_csv("MessiRonaldoComplete.csv")
 ```
+
+###Introduction 
+
+Cristiano Ronaldo and Lionel Messi are inarguably the two best soccer players in the world right now. They have shared the Ballon D’or (the annual award for the best player in soccer) between each other for ten years from 2008-2017. Who is better between the two of them is a topic of frequent debate between many soccer enthusiasts. In fact, many articles, blog posts and websites are dedicated to providing continually updated statistics including goals, assists and trophies won to give evidence about who is the better player between the two. 
+
+Our blog also aims to compare the performance of the two players over their playing years. We aim to compare the most important statistics used to evaluate the performance of a soccer player (goals scored, assists (the number of times the player made the final pass for another player to score a goal) and the number of appearances the player has made. We compare their performances for their respective club teams. Cristiano Ronaldo has played for four different clubs in his playing career including Sporting CP (in Portgual), Manchester United (in England) and Real Madrid (in Spain). He is currently playing for Juventus (in Italy). Lionel Messi, on the other hand, has only played for FC Barcelona (in Spain). In their club careers, we look at how the players have fared against each other in the UEFA Champions League/European Cup (the biggest competition for soccer clubs in Europe) and in the La Liga (the Spanish national soccer league) when both players were playing for Spanish soccer clubs. We also aim to compare Ronaldo and Messi's performance for their national teams, Portgual and Argentina, respectively. These comparisons will be primarily made through data visualizations (histograms, scatterplots etc). We also aim to fit a supervised statistical learning model which has the highest accuracy in predicting the Ballon D'or winner (Ronaldo/Messi) for a given year, given their performance statistics for that particular year.
+
+![](https://mirage.mathcs.carleton.edu/s/f3e9d4dcd233b8eecc390/files/Math285/Assignments/pair-homework-3-pair-homework-3-team-3/Picture.jpg)
+
+
 
 ```{r}
 inputPanel(
@@ -99,38 +110,35 @@ shinyUI(fluidPage(
   fluidRow(
       column(width = 12, 
              tableOutput("hover_data_5")
-      ),
+      )),
   mainPanel(
     tabsetPanel(type = "tab",
-                tabPanel("Dataset",tableOutput("data")),
+                tabPanel("Dataset",tableOutput("hover_data_5")),
                 tabPanel("Plot", plotOutput("gap_plot_5"))
                 )
    )
   )
  )
-)
 
 # render plot
-shinyServer(
-  output$gap_plot_5 <- renderPlot({
-  ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
-    geom_point() + 
-    theme(axis.text=element_text(size=16),
-          axis.title=element_text(size=16) )
-}))
+# output$gap_plot_5 <- renderPlot({
+#   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
+#     geom_point() + 
+#     theme(axis.text=element_text(size=16),
+#           axis.title=element_text(size=16) )
+# })
+
 ## render text for hovered point(s)
 shinyServer(
-  output$hover_data_5 <- renderTable({
-   nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
-  }))
-
-shinyServer(
   function(input, output){
-    output$data <- renderTable({
-      MessiRonaldoLonger  
-    })
-  }
-)
+  output$hover_data_5 <- renderTable({
+    nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]})
+  output$gap_plot_5 <- renderPlot({
+    ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
+      geom_point() + 
+      theme(axis.text=element_text(size=16),
+            axis.title=element_text(size=16))})
+})
 ```
 
 ```{r}
@@ -172,3 +180,55 @@ renderPlot({
     facet_wrap(~Player)
 })
 ```
+
+###Statistical Learning
+
+*For a detailed understanding of our statistical learning methodology, review the file `Scraping and Analysis.Rmd` in our repository.*
+
+We tried to fit a random forests statistical learning model but that model did not have a very high accuracy in predicting the Ballon D'or winner in the test split of our Dataset. Therefore, we tried to fit a logistic regression model in which we modelled the Ballon D'or winner against all the predictor variables in our dataset also determining the threshold level that maximized our accuracy. Based on this model, all thresholds returned a value of one for accuracy, precision, sensitivity, and specificity. Moreover, the REuropean Cup variable seemed to almost perfectly capture the behavior of Ballon D'or. Therefore, we decided to reduce the number of predictor variables we were using based on our background knowledge to a number which is lesser than the number of observations to see if that improved our model.We deemed that the number of appearances a player makes for either their club or country, the number of times they assist another player in scoring a goal and whether their team wins the Domestic Cup or not are not very important in determining whether they should win the Ballon D'or or not. Therefore, we fit a revised logistic regression model without these predictor variables. This model can be seen below.
+
+```{r, include=FALSE}
+MessiRonaldoComplete1<- read.csv("MessiRonaldoComplete.csv") %>%
+  select(-MTotAssists, -MTotGoals,- MTotApps, - RTotAssists, - RTotGoals, - RTotApps)
+```
+
+```{r Training/Test Split, include=FALSE}
+set.seed(757302859)
+n <- nrow(MessiRonaldoComplete1)
+train_index <- sample(n, size=round(.8*n))
+BDor_train <- MessiRonaldoComplete1 %>% slice(train_index)
+BDor_test <- MessiRonaldoComplete1 %>% slice(-train_index)
+```
+
+```{r, results="hide"}
+BDor_logistic2 <- glm(BallonDor~ MClubGoals +MCoGoals + MEuropeanCup + MLeague+ RClubGoals + RCoGoals+ REuropeanCup + RLeague, data=BDor_train, family = binomial)
+```
+
+```{r, include=FALSE}
+BDor_test3 <- BDor_test %>% 
+  mutate(prob = predict(BDor_logistic2, newdata = BDor_test, type = "response"),
+         prediction = ifelse(prob > 0.5, "Messi", "Ronaldo"),
+         prediction = fct_relevel(prediction, "Ronaldo", "Messi"))
+```
+
+```{r, include=FALSE}
+t <- seq(0.05, 0.95, by = 0.05)
+eval_fun <- function(t, test) 
+  {test %>%
+  mutate(prediction = ifelse( prob > t, "Messi", "Ronaldo") ) %>%
+  summarize(threshold=t, 
+            accuracy = mean(prediction == BallonDor), 
+            sensitivity = sum(prediction == "Messi" & BallonDor == "Messi")/sum(BallonDor == "Messi"),
+            specificity = sum(prediction == "Ronaldo" & BallonDor == "Ronaldo")/sum(BallonDor == "Ronaldo"),
+            precision = sum(prediction == "Messi" & BallonDor == "Messi")/sum(prediction == "Messi"))
+}
+eval_df <- map_df(t, eval_fun, test = BDor_test3)
+```
+
+```{r, echo=FALSE}
+glimpse(eval_df)
+```
+
+We see that after revising the model, all thresholds did not return the same value of accuracy, precision, sensitivity, and specificity. For this model, thresholds above t = 0.7 did return a value of one for the accuracy, precision, sensitivity, and specificity. Therefore, we decided to use a threshold of 0.7 to decide which player should win the Ballon D'or.
+However, the REuropean Cup variable still perfectly captured the behavior of Ballon D'or. But we decided against removing this variable, as the European Cup is the most important competition each year and if a player wins it they are almost guaranteed to win the Ballon D'or. For Cristiano Ronaldo, in particular, every year that he has been a part of the European Cup winning team, he has almost certainly won the Ballon D'or.
+Therefore, our model illustrated how important the European Cup is in determining the winner of the Ballon D'or. It has given us evidence that when predicting the winner of the Ballon D'or a certain year, it is very important to consider whether the player won the European Cup with their team. If they did, then it is very likely that they will in fact win the Ballon D'or.
