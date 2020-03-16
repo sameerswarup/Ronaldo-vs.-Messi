@@ -41,6 +41,9 @@ MessiRonaldoLonger <- rbind(MessiComplete1,RonaldoComplete1) %>%
          ClubAssists,ClubGoals,CoApps,CoAssists,CoGoals)
 ```
 
+```{r}
+write_csv(MessiRonaldoLonger, "MessiRonaldoLonger.csv")
+```
 
 ```{r}
 inputPanel(
