@@ -346,6 +346,10 @@ messiAndRonaldoLaLigaLong <- messiAndRonaldoLaLigaLong %>% slice(-(19:72))
 ```
 
 ```{r}
+write_csv(messiAndRonaldoLaLigaLong, "messiAndRonaldoLaLigaLong.csv")
+```
+
+```{r}
 ronaldoCopaDelRey <-html_table(ronaldoTable.html[[2]], fill = TRUE) %>% as_tibble(.name_repair = "unique")
 
 ronaldoCopaDelRey <- ronaldoCopaDelRey %>% select(Season, Club) %>% rename(Goals = "Club") %>% drop_na() %>% slice(3:11)

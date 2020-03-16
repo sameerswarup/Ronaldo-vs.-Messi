@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readr)
 library(tidyr)
+library(shiny)
 ```
 
 *Comparing distributions of different statistics*
@@ -46,6 +47,10 @@ write_csv(MessiRonaldoLonger, "MessiRonaldoLonger.csv")
 ```
 
 ```{r}
+messiAndRonaldoLaLigaLong <- read_csv("messiAndRonaldoLaLigaLong.csv")
+```
+
+```{r}
 inputPanel(
   selectInput("x_2", label = "Type of Stat", 
              choices = c("Total Appearances" ="TotApps",
@@ -59,7 +64,7 @@ inputPanel(
                          "Country Goals" ="CoGoals"))
 )
 renderPlot({
-  ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$x_2)) + 
+  ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$x_2, fill = "Player")) + 
     geom_col()+
     facet_wrap(~Player)
 })
@@ -116,7 +121,7 @@ fluidPage(
     column(width = 3,   
         wellPanel(                
           # data widget: selecting the variables 
-          selectInput("y_5", label = "y-axis Variable:",
+          selectInput("y_6", label = "y-axis Variable:",
              choices = c("Appearances",
                          "Goals",
                          "Assists"),
@@ -124,26 +129,26 @@ fluidPage(
         )
       ),
     column(width = 8, 
-             plotOutput("gap_plot_5",hover="hover_coord_5")
+             plotOutput("gap_plot_6",hover="hover_coord_6")
       )
     ),
   fluidRow(
       column(width = 12, 
-             tableOutput("hover_data_5")
+             tableOutput("hover_data_6")
       )
   )
 )
 
 # render plot
-output$gap_plot_5 <- renderPlot({
-  ggplot(messiAndRonaldoLaLigaLong, aes_string(x = "Season", y = input$y_5, color= "Player")) + 
+output$gap_plot_6 <- renderPlot({
+  ggplot(messiAndRonaldoLaLigaLong, aes_string(x = "Season", y = input$y_6, color= "Player")) + 
     geom_point() + 
     geom_smooth(se = FALSE) +
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
 })
 ## render text for hovered point(s)
-output$hover_data_5 <- renderTable({
-   nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
+output$hover_data_6 <- renderTable({
+   nearPoints(MessiRonaldoLonger, input$hover_coord_6)[,1:6]
   })
 ```
