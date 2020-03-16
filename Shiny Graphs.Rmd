@@ -99,14 +99,19 @@ shinyUI(fluidPage(
              tableOutput("hover_data_5")
       ),
   mainPanel(
-    plotOutput(gap_plot_5)
-  )
+    tabsetPanel(type = "tab",
+                tabPanel("Dataset",tableOutput(hover_data_5)),
+                tabPanel("Plot", plotOutput(gap_plot_5))
+                )
+   )
   )
  )
 )
 
 # render plot
-shinyServer(output$gap_plot_5 <- renderPlot({
+shinyServer(
+  
+  output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
     geom_smooth(se = FALSE) +
@@ -114,7 +119,8 @@ shinyServer(output$gap_plot_5 <- renderPlot({
           axis.title=element_text(size=16) )
 }))
 ## render text for hovered point(s)
-shinyServer(output$hover_data_5 <- renderTable({
+shinyServer(
+  output$hover_data_5 <- renderTable({
    nearPoints(MessiRonaldoLonger, input$hover_coord_5)[,1:6]
   }))
 ```
