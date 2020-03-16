@@ -53,6 +53,25 @@ messiAndRonaldoLaLiga <- read_csv("messiAndRonaldoLaLiga.csv")
 messiAndRonaldoUEFA <- read_csv("messiAndRonaldoUEFA.csv")
 ```
 
+
+```{r}
+inputPanel(
+  selectInput("x_1", label = "Choose a dataset",
+              choices = c("Messi vs Ronaldo" = "MessiRonaldoLonger",
+                          "LaLiga" = "messiAndRonaldoLaLiga",
+                          "UEFA" = "messiAndRonaldoUEFA")
+              ),
+  fluidRow(
+    column(width = 12,
+           tableOutput("datasets"))
+  )
+)
+output$datasets <- renderTable({
+  input$x_1
+  
+})
+```
+
 ```{r,echo=FALSE}
 inputPanel(
   selectInput("x_2", label = "Type of Stat", 
@@ -107,6 +126,7 @@ fluidPage(
   output$gap_plot_5 <- renderPlot({
   ggplot(MessiRonaldoLonger, aes_string(x = "Year", y = input$y_5, color= "Player")) + 
     geom_point() + 
+    geom_smooth(se=FALSE)
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=16) )
 })
