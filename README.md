@@ -1,4 +1,45 @@
 # final-project-WaleedIftikhar-SameerSwarup
+
+## Grading (95 points + 5 points evals)
+## Score: 76/95
+
+1. *Project Scope:*  7
+
+2. *Background and motivation:* 9
+
+3. *Data description:* 7
+
+- It isn't clear what the various data sources are showing (e.g. difference between Complete and Longer)
+- Give a more clear description of variables
+
+4. *Methodology:* 6
+
+- why not just use player performance stats to predict winner? why include other win variables?
+- can't fit a stat model when you have more parameters to estimate than the number of data cases
+- you only have two cases in your test data, it doesn't make sense to assess a method's accuracy in this case
+
+5. *Implementation:* 10
+
+6. *Discussion/interpretation of results:* 8
+
+- you don't discuss the fact that you did a training/test split
+
+7. *Coding style and quality:* 10
+
+8. *Presentation:* 7
+
+- bar graphs would be better if they were side-by-side rather than faceted for each player. Would lead to a more direct comparison for a given year
+- no R code, use tables for results
+
+9. *Submission:* 10
+
+The following aspects will be graded on a 5-point scale:
+
+10. *Creativity:* 2
+
+
+
+
 A repository for our final project which aims to answer one of the most important questions of all time: Ronaldo or Messi. 
 **link**: https://iftikharw.shinyapps.io/RonaldoVsMessi/
 
